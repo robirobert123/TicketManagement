@@ -1,0 +1,113 @@
+﻿@model IEnumerable<TicketManagement.Models.TicketModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PriorityID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PriorityText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.audit_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created_User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.audit_User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Assignee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AssigneeName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PriorityID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PriorityText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.audit_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.audit_User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assignee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AssigneeName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TicketID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TicketID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TicketID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
