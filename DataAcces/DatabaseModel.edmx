@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="TicketManagementModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="TicketManagementEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__EFMigrationsHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -245,18 +245,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Status_Status">
-          <End Role="Status" Type="Self.Status" Multiplicity="1" />
-          <End Role="Status1" Type="Self.Status" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Status">
-              <PropertyRef Name="StatusID" />
-            </Principal>
-            <Dependent Role="Status1">
-              <PropertyRef Name="StatusID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Tickets_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
@@ -271,13 +259,13 @@
         </Association>
         <Association Name="FK_Tickets_Categories">
           <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
-          <End Role="Tickets" Type="Self.Tickets" Multiplicity="0..1" />
+          <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Categories">
               <PropertyRef Name="CategoryID" />
             </Principal>
             <Dependent Role="Tickets">
-              <PropertyRef Name="TicketID" />
+              <PropertyRef Name="CategoryID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -305,7 +293,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="TicketManagementModelStoreContainer">
+        <EntityContainer Name="TicketManagementEntitiesStoreContainer">
           <EntitySet Name="__EFMigrationsHistory" EntityType="Self.__EFMigrationsHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoleClaims" EntityType="Self.AspNetRoleClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
@@ -351,10 +339,6 @@
             <End Role="Tickets" EntitySet="Tickets" />
             <End Role="Images" EntitySet="Images" />
           </AssociationSet>
-          <AssociationSet Name="FK_Status_Status" Association="Self.FK_Status_Status">
-            <End Role="Status" EntitySet="Status" />
-            <End Role="Status1" EntitySet="Status" />
-          </AssociationSet>
           <AssociationSet Name="FK_Tickets_AspNetUsers" Association="Self.FK_Tickets_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Tickets" EntitySet="Tickets" />
@@ -376,7 +360,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="TicketManagementModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="TicketManagementEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="C__EFMigrationsHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -473,7 +457,7 @@
           </Key>
           <Property Name="CategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Ticket" Relationship="Self.FK_Tickets_Categories" FromRole="Categories" ToRole="Tickets" />
+          <NavigationProperty Name="Tickets" Relationship="Self.FK_Tickets_Categories" FromRole="Categories" ToRole="Tickets" />
         </EntityType>
         <EntityType Name="Image">
           <Key>
@@ -605,13 +589,13 @@
         </Association>
         <Association Name="FK_Tickets_Categories">
           <End Role="Categories" Type="Self.Category" Multiplicity="1" />
-          <End Role="Tickets" Type="Self.Ticket" Multiplicity="0..1" />
+          <End Role="Tickets" Type="Self.Ticket" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Categories">
               <PropertyRef Name="CategoryID" />
             </Principal>
             <Dependent Role="Tickets">
-              <PropertyRef Name="TicketID" />
+              <PropertyRef Name="CategoryID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -639,18 +623,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Status_Status">
-          <End Role="Status" Type="Self.Status" Multiplicity="1" />
-          <End Role="Status1" Type="Self.Status" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Status">
-              <PropertyRef Name="StatusID" />
-            </Principal>
-            <Dependent Role="Status1">
-              <PropertyRef Name="StatusID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Tickets_Status">
           <End Role="Status" Type="Self.Status" Multiplicity="1" />
           <End Role="Tickets" Type="Self.Ticket" Multiplicity="*" />
@@ -667,7 +639,7 @@
           <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="TicketManagementEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__EFMigrationsHistory" EntityType="Self.C__EFMigrationsHistory" />
           <EntitySet Name="AspNetRoleClaims" EntityType="Self.AspNetRoleClaim" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
@@ -716,10 +688,6 @@
             <End Role="Priorities" EntitySet="Priorities" />
             <End Role="Tickets" EntitySet="Tickets" />
           </AssociationSet>
-          <AssociationSet Name="FK_Status_Status" Association="Self.FK_Status_Status">
-            <End Role="Status" EntitySet="Status" />
-            <End Role="Status1" EntitySet="Status" />
-          </AssociationSet>
           <AssociationSet Name="FK_Tickets_Status" Association="Self.FK_Tickets_Status">
             <End Role="Status" EntitySet="Status" />
             <End Role="Tickets" EntitySet="Tickets" />
@@ -734,9 +702,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="TicketManagementModelStoreContainer" CdmEntityContainer="TicketManagementEntities">
+        <EntityContainerMapping StorageEntityContainer="TicketManagementEntitiesStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="C__EFMigrationsHistory">
-            <EntityTypeMapping TypeName="TicketManagementModel.C__EFMigrationsHistory">
+            <EntityTypeMapping TypeName="TicketManagementEntities.C__EFMigrationsHistory">
               <MappingFragment StoreEntitySet="__EFMigrationsHistory">
                 <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
                 <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
@@ -744,7 +712,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetRoleClaims">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetRoleClaim">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetRoleClaim">
               <MappingFragment StoreEntitySet="AspNetRoleClaims">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="RoleId" ColumnName="RoleId" />
@@ -754,7 +722,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetRole">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetRole">
               <MappingFragment StoreEntitySet="AspNetRoles">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -764,7 +732,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserClaims">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetUserClaim">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetUserClaim">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -774,7 +742,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserLogins">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetUserLogin">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetUserLogin">
               <MappingFragment StoreEntitySet="AspNetUserLogins">
                 <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
                 <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
@@ -784,7 +752,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUsers">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetUser">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -807,7 +775,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserTokens">
-            <EntityTypeMapping TypeName="TicketManagementModel.AspNetUserToken">
+            <EntityTypeMapping TypeName="TicketManagementEntities.AspNetUserToken">
               <MappingFragment StoreEntitySet="AspNetUserTokens">
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
@@ -817,7 +785,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Categories">
-            <EntityTypeMapping TypeName="TicketManagementModel.Category">
+            <EntityTypeMapping TypeName="TicketManagementEntities.Category">
               <MappingFragment StoreEntitySet="Categories">
                 <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -825,7 +793,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Images">
-            <EntityTypeMapping TypeName="TicketManagementModel.Image">
+            <EntityTypeMapping TypeName="TicketManagementEntities.Image">
               <MappingFragment StoreEntitySet="Images">
                 <ScalarProperty Name="ImageID" ColumnName="ImageID" />
                 <ScalarProperty Name="BinaryCode" ColumnName="BinaryCode" />
@@ -834,7 +802,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Priorities">
-            <EntityTypeMapping TypeName="TicketManagementModel.Priority">
+            <EntityTypeMapping TypeName="TicketManagementEntities.Priority">
               <MappingFragment StoreEntitySet="Priorities">
                 <ScalarProperty Name="PriorityID" ColumnName="PriorityID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -843,7 +811,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Status">
-            <EntityTypeMapping TypeName="TicketManagementModel.Status">
+            <EntityTypeMapping TypeName="TicketManagementEntities.Status">
               <MappingFragment StoreEntitySet="Status">
                 <ScalarProperty Name="StatusID" ColumnName="StatusID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -851,7 +819,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Tickets">
-            <EntityTypeMapping TypeName="TicketManagementModel.Ticket">
+            <EntityTypeMapping TypeName="TicketManagementEntities.Ticket">
               <MappingFragment StoreEntitySet="Tickets">
                 <ScalarProperty Name="TicketID" ColumnName="TicketID" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -868,7 +836,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="AspNetUserRoles" TypeName="TicketManagementModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="TicketManagementEntities.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
             <EndProperty Name="AspNetRoles">
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>

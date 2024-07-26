@@ -11,6 +11,7 @@ namespace DataAcces
 {
     using System;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     
     public partial class TicketManagementEntities : DbContext
     {
@@ -21,9 +22,9 @@ namespace DataAcces
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Category>().HasMany(e => e.Ticket).WithRequired(e => e.Category).WillCascadeOnDelete(false);
+            throw new UnintentionalCodeFirstException();
         }
-
+    
         public virtual DbSet<C__EFMigrationsHistory> C__EFMigrationsHistory { get; set; }
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }

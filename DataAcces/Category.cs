@@ -14,9 +14,16 @@ namespace DataAcces
     
     public partial class Category
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Category()
+        {
+            this.Tickets = new HashSet<Ticket>();
+        }
+    
         public int CategoryID { get; set; }
         public string Name { get; set; }
     
-        public virtual Ticket Ticket { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Ticket> Tickets { get; set; }
     }
 }
