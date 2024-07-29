@@ -21,7 +21,8 @@ namespace BusinessLogic.Handlers
         }
         public ResultEntity<TicketEntity> GetTicketById(int ticketId)
         {
-            using (var unitOfWork = new UnitOfWork())
+            using (
+                var unitOfWork = new UnitOfWork())
             {
                 var ticket = unitOfWork.TicketRepository.Get(ticketId).ToBusinessEntity();
 

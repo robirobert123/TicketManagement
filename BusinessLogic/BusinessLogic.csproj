@@ -52,11 +52,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\CategoryEntity.cs" />
+    <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="Entities\ImageEntity.cs" />
+    <Compile Include="Entities\PriorityEntity.cs" />
     <Compile Include="Entities\ResultEntity.cs" />
+    <Compile Include="Entities\StatusEntity.cs" />
     <Compile Include="Entities\TicketEntity.cs" />
     <Compile Include="Extensions\CategoryExtension.cs" />
+    <Compile Include="Extensions\UserExtension.cs" />
     <Compile Include="Extensions\ImageExtension.cs" />
+    <Compile Include="Extensions\PriorityExtension.cs" />
+    <Compile Include="Extensions\StatusExtension.cs" />
     <Compile Include="Extensions\TicketExtension.cs" />
     <Compile Include="Handlers\Interfaces\ITicketHandler.cs" />
     <Compile Include="Handlers\TicketHandler.cs" />
