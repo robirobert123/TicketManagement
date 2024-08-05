@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Entities;
 using DataAcces;
+using System.Collections.Generic;
 
 namespace BusinessLogic.Extensions
 {
@@ -30,6 +31,36 @@ namespace BusinessLogic.Extensions
                 StatusID = businessEntity.StatusID,
                 Name = businessEntity.StatusName
             };
+        }
+        internal static ICollection<StatusEntity> ToBusinessEntity(this ICollection<Status> dataAccess)
+        {
+            if (dataAccess == null)
+            {
+                return null;
+            }
+
+            var result = new List<StatusEntity>();
+            foreach (var item in dataAccess)
+            {
+                result.Add(item.ToBusinessEntity());
+            }
+
+            return result;
+        }
+        internal static ICollection<Status> ToDataAccessEntity(this ICollection<StatusEntity> businessEntity)
+        {
+            if (businessEntity == null)
+            {
+                return null;
+            }
+
+            var result = new List<Status>();
+            foreach (var item in businessEntity)
+            {
+                result.Add(item.ToDataAccessEntity());
+            }
+
+            return result;
         }
     }
 }

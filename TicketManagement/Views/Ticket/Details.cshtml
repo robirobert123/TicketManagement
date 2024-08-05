@@ -1,102 +1,58 @@
-﻿@model TicketManagement.Models.TicketModel
+﻿@model TicketManagement.Models.TicketDetailsModel
 
 @{
     ViewData["Title"] = "Details";
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>TicketModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.HiddenFor(model => model.PriorityID)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.HiddenFor(model => model.PriorityID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PriorityText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PriorityText)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.HiddenFor(model => model.CategoryID)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.HiddenFor(model => model.CategoryID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryText)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.HiddenFor(model => model.StatusID)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.HiddenFor(model => model.StatusID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusText)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.created_User)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.created_User)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.created_Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.created_Date)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.HiddenFor(model => model.audit_User)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.HiddenFor(model => model.audit_User)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.audit_Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.audit_Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.HiddenFor(model => model.Assignee)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.HiddenFor(model => model.Assignee)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AssigneeName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AssigneeName)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.TicketID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/styles.css">
+</head>
+<body>
+    <div class="container-create">
+        <h1 class="ticket-title">@Model.Title</h1>
+        <div class="ticket-section">
+            <label for="description">Description:</label>
+            <p id="description">@Model.Description</p>
+        </div>
+        <div class="ticket-section">
+            <label for="priority">Priority:</label>
+            <p id="priority">@Model.PriorityText</p>
+        </div>
+        <div class="ticket-section">
+            <label for="category">Category:</label>
+            <p id="category">@Model.CategoryText</p>
+        </div>
+        <div class="ticket-section">
+            <label for="status">Status:</label>
+            <p id="category">@Model.StatusText</p>
+        </div>
+        <div class="ticket-section">
+            <label for="created-by">Created By:</label>
+            <p id="created-by">@Model.CreatedUser</p>
+        </div>
+        <div class="ticket-section">
+            <label for="created-at">Created At:</label>
+            <p id="created-at">@Model.CreatedDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="ticket-section">
+            <label for="assignee">Assignee:</label>
+            <p id="assignee">@Model.AssigneeName</p>
+        </div>
+        <div class="ticket-section">
+            <label for="last-update">Last Update:</label>
+            <p id="last-update">@Model.AuditDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div>
+            <button class="edit-button" id="editbtn" asp-action="Edit" asp-route-id="@Model?.TicketID">Edit</button>
+        </div>
+    </div>
+</body>
+<script>
+    $('#editbtn').click(function () {
+        window.location.href = "/Ticket/Edit/@Model.TicketID";
+    })
+</script>
+</html>

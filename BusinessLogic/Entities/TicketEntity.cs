@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace BusinessLogic.Entities
 {
     public class TicketEntity
     {
+        [Key]
         public int TicketID { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

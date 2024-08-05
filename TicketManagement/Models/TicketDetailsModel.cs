@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TicketManagement.Models
 {
-    public class TicketModel
+    public class TicketDetailsModel
     {
         [Key]
         public int TicketID { get; set; }
@@ -20,13 +20,13 @@ namespace TicketManagement.Models
         [DisplayName("Status")]
         public string StatusText { get; set; }
         [DisplayName("Created at:")]
-        public System.DateTime created_Date { get; set; }
+        public System.DateTime CreatedDate { get; set; }
         [DisplayName("Last update:")]
-        public System.DateTime audit_Date { get; set; }
+        public System.DateTime AuditDate { get; set; }
         [DisplayName("Created by:")]
-        public string created_User { get; set; }
+        public string CreatedUser { get; set; }
         [DisplayName("Last updated by:")]
-        public string audit_User { get; set; }
+        public string AuditUser { get; set; }
         public string Assignee { get; set; }
         [DisplayName("Assignee:")]
         public string AssigneeName { get; set; }

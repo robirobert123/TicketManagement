@@ -2,48 +2,163 @@ html {
     font-size: 14px;
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+
+body, html {
+    width: 100%;
+    overflow: auto; 
 }
 
 html {
     position: relative;
     min-height: 100%;
 }
+* {
+    box-sizing: border-box;
+}
 
 body {
-    margin-bottom: 60px;
-    font-family: Roboto,sans-serif;
+    font-family: Arial, sans-serif;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(58,58,255,1) 0%, rgba(0,250,255,1) 100%);
+    align-items: center;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
 }
 
-/*tab navigation*/
-.login-logout-card .card-header {
-    padding: 0px 0px 12px 0px;
+.navbar {
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.login-logout-card ul.nav-tabs {
-    margin: 0px 0px -12px 0px;
+.navbar .logo {
+    font-size: 1.8em;
+    font-weight: bold;
 }
 
-.login-logout-card li.nav-item {
+.navbar .user-info {
+    font-size: 1em;
+}
+
+.navbar-collapse {
+    right: 0;
+}
+ 
+.edit-button {
+    position: center;
+    margin: 10px;
+    padding: 15px 40px;
+    border: none;
+    outline: none;
+    color: #FFF;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 12px;
+}
+
+.edit-button::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+    /* glow */
+    .edit-button::before {
+        content: "";
+        background: linear-gradient( 315deg, #00eeff, #00e5ff, #00a2ff, #005eff);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 600%;
+        z-index: -1;
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        filter: blur(8px);
+        animation: glowing 20s linear infinite;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+        opacity: 0;
+    }
+
+@keyframes glowing {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 400% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.edit-button:hover::before {
+    opacity: 1;
+}
+
+.edit-button:active:after {
+    background: transparent;
+}
+
+.edit-button:active {
+    color: #000;
+    font-weight: bold;
+}
+
+.container-create {
+    margin-top: 30px;
+    background-color: white;     
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    box-sizing: border-box;
+    text-align: left;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
     width: 50%;
 }
 
-.login-logout-card a.nav-link {
-    font-size: 1rem;
-    color: #495057;
-    text-align: center;
-    padding: 1rem;
+.drop-down {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
 }
 
-.login-logout-card .card-body {
-    padding: 10px 20px;
+.form-group {
+    margin-bottom: 1em;
 }
+
+
+.head-title{
+    color: white;
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+    font-weight: bold;
+}
+
 
 

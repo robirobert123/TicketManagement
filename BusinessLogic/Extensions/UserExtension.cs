@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Entities;
 using DataAcces;
+using System.Collections.Generic;
 
 namespace BusinessLogic.Extensions
 {
@@ -33,6 +34,36 @@ namespace BusinessLogic.Extensions
                 LastName = businessEntity.LastName,
                 UserName = businessEntity.UserName
             };
+        }
+        internal static ICollection<UserEntity> ToBusinessEntity(this ICollection<AspNetUser> dataAccess)
+        {
+            if (dataAccess == null)
+            {
+                return null;
+            }
+
+            var result = new List<UserEntity>();
+            foreach (var item in dataAccess)
+            {
+                result.Add(item.ToBusinessEntity());
+            }
+
+            return result;
+        }
+        internal static ICollection<AspNetUser> ToDataAccessEntity(this ICollection<UserEntity> businessEntity)
+        {
+            if (businessEntity == null)
+            {
+                return null;
+            }
+
+            var result = new List<AspNetUser>();
+            foreach (var item in businessEntity)
+            {
+                result.Add(item.ToDataAccessEntity());
+            }
+
+            return result;
         }
     }
 }

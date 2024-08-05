@@ -21,5 +21,7 @@ public class TicketManagementDbContext : IdentityDbContext<TicketManagementUser>
         // Add your customizations after calling base.OnModelCreating(builder);
     }
 
-public DbSet<TicketManagement.Models.TicketModel> TicketModel { get; set; } = default!;
+public DbSet<TicketManagement.Models.TicketDetailsModel> TicketModel { get; set; } = default!;
+
+public DbSet<TicketManagement.Models.TicketEditModel> TicketEditModel { get; set; } = default!;
 }

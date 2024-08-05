@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TicketManagement.Models.TicketModel>
+﻿@model IEnumerable<TicketManagement.Models.TicketDetailsModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -37,16 +37,16 @@
                 @Html.DisplayNameFor(model => model.StatusText)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.created_Date)
+                @Html.DisplayNameFor(model => model.CreatedDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.audit_Date)
+                @Html.DisplayNameFor(model => model.AuditDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.created_User)
+                @Html.DisplayNameFor(model => model.CreatedUser)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.audit_User)
+                @Html.DisplayNameFor(model => model.AuditUser)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Assignee)
@@ -85,16 +85,16 @@
                 @Html.DisplayFor(modelItem => item.StatusText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.created_Date)
+                @Html.DisplayFor(modelItem => item.CreatedDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.audit_Date)
+                @Html.DisplayFor(modelItem => item.AuditDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.created_User)
+                @Html.DisplayFor(modelItem => item.CreatedUser)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.audit_User)
+                @Html.DisplayFor(modelItem => item.AuditUser)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Assignee)
