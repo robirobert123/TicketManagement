@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Handlers;
+using DataAcces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.Areas.Identity.Data;
 using TicketManagement.Data;
@@ -14,18 +14,28 @@ namespace TicketManagement.Controllers
     {
         private readonly UserManager<TicketManagementUser> _userManager;
         private readonly TicketManagementDbContext _context;
+        private readonly ILogger<TicketController> _logger;
 
-        public TicketController(TicketManagementDbContext context, UserManager<TicketManagementUser> userManager)
+        public TicketController(ILogger<TicketController> logger, TicketManagementDbContext context, UserManager<TicketManagementUser> userManager)
         {
+            _logger = logger;
             _context = context;
-            _userManager = userManager; 
+            _userManager = userManager;
         }
 
         // GET: Ticket
         public async Task<IActionResult> Index()
         {
-
-            return View(await _context.TicketModel.ToListAsync());
+            try
+            {
+                return View(await _context.TicketModel.ToListAsync());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while getting ticket list");
+                ModelState.AddModelError("Error", e.Message);
+            }
+            return View(new List<Ticket>());
         }
 
         // GET: Ticket/Details/5
@@ -35,25 +45,49 @@ namespace TicketManagement.Controllers
             {
                 return NotFound();
             }
-
-            var ticketHandler = new TicketHandler();
-            var ticketEntity = ticketHandler.GetTicketById(id.Value);
-            var ticketHelper = new TicketHelper();
-            var ticketModel = ticketHelper.ToViewModel(ticketEntity.Data);
-
-            if (ticketModel == null)
+            try
             {
-                return NotFound();
-            }
-            return View(ticketModel);
+                var ticketHandler = new TicketHandler();
+                var ticketEntity = ticketHandler.GetTicketById(id.Value);
+                var ticketHelper = new TicketHelper();
+                var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
 
+                if (ticketModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticketModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while getting details for ticket ID");
+                ModelState.AddModelError("Error", e.Message);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Ticket/Create
         public IActionResult Create()
         {
-            var helper = new TicketHelper();
-            var model = helper.ToCreateModel();
+            var model = new TicketCreateModel();
+            try
+            {
+                var helper = new TicketHelper();
+                model = helper.GetCreateModel();
+
+                if (!model.IsValid)
+                {
+                    foreach (var error in model.ErrorMessages)
+                    {
+                        ModelState.AddModelError("Error", error);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("Error", e.Message);
+            }
             return View(model);
         }
 
@@ -64,15 +98,24 @@ namespace TicketManagement.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Title,Description,PriorityID,CategoryID,StatusID,Assignee")] TicketCreateModel ticketModel)
         {
-            var user = _userManager.GetUserAsync(User).Result;
-            var name = user.FirstName + " " + user.LastName;
-            var helper = new TicketHelper();
-            var data = helper.ToDataEntity(ticketModel, name);
+            try
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var name = user.FirstName + " " + user.LastName;
+                var helper = new TicketHelper();
+                var data = helper.ToDataEntity(ticketModel, name);
 
-            var handler = new TicketHandler();
-            var createdTicket = handler.InsertTicket(data).Data;
+                var handler = new TicketHandler();
+                var createdTicket = handler.InsertTicket(data).Data;
 
-            return RedirectToAction("Details", new { id = createdTicket.TicketID });
+                return RedirectToAction("Details", new { id = createdTicket.TicketID });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while creating a new ticket");
+                ModelState.AddModelError("Error", e.Message);
+            }
+            return View(ticketModel);
         }
 
         // GET: Ticket/Edit/5
@@ -82,11 +125,20 @@ namespace TicketManagement.Controllers
             {
                 return NotFound();
             }
-            var ticketHandler = new TicketHandler();
-            var ticketEntity = ticketHandler.GetTicketById(id.Value);
-            var ticketHelper = new TicketHelper();
-            var ticketModel = ticketHelper.ToEditModel(ticketEntity.Data);
-            return View(ticketModel);
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var ticketEntity = ticketHandler.GetTicketById(id.Value);
+                var ticketHelper = new TicketHelper();
+                var ticketModel = ticketHelper.GetEditModel(ticketEntity.Data);
+                return View(ticketModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while loading edit form for ticket ID");
+                ModelState.AddModelError("Error", e.Message);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -102,14 +154,24 @@ namespace TicketManagement.Controllers
                 return NotFound();
             }
 
-            var user = _userManager.GetUserAsync(User).Result;
-            var name = user.FirstName + " " + user.LastName;
-            var helper = new TicketHelper();
-            var data = helper.ToDataEntity(ticketModel, name);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var name = user.FirstName + " " + user.LastName;
+                var helper = new TicketHelper();
+                var data = helper.ToDataEntity(ticketModel, name);
 
-            var handler = new TicketHandler();
-            var postedTicket = handler.UpdateTicket(data).Data;
-            return RedirectToAction(nameof(Details), new {id = ticketModel.TicketID});
+                var handler = new TicketHandler();
+                var postedTicket = handler.UpdateTicket(data).Data;
+
+                return RedirectToAction(nameof(Details), new { id = ticketModel.TicketID });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while updating ticket ID");
+                ModelState.AddModelError("Error", e.Message);
+            }
+            return View(ticketModel);
         }
 
         // GET: Ticket/Delete/5
@@ -149,6 +211,6 @@ namespace TicketManagement.Controllers
         {
             return _context.TicketModel.Any(e => e.TicketID == id);
         }
-        
+
     }
 }

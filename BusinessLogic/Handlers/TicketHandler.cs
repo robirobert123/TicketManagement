@@ -3,6 +3,7 @@ using BusinessLogic.Extensions;
 using BusinessLogic.Handlers.Interfaces;
 using DataAcces;
 using DataAcces.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,64 +13,107 @@ namespace BusinessLogic.Handlers
     {
         public ResultEntity<IEnumerable<TicketEntity>> GetAllTickets()
         {
-            using (var unitOfWork = new UnitOfWork())
+            try
             {
-                var list = unitOfWork.TicketRepository.GetAll().ToList().ToBusinessEntity();
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var list = unitOfWork.TicketRepository.GetAllTickets().ToList().ToBusinessEntity();
 
-
-                return new ResultEntity<IEnumerable<TicketEntity>> { Data = list, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<IEnumerable<TicketEntity>> { Data = list, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<IEnumerable<TicketEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
         public ResultEntity<TicketEntity> GetTicketById(int ticketId)
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                var ticket = unitOfWork.TicketRepository.Get(ticketId).ToBusinessEntity();
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    var ticket = unitOfWork.TicketRepository.Get(ticketId).ToBusinessEntity();
 
-                return new ResultEntity<TicketEntity> { Data = ticket, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<TicketEntity> { Data = ticket, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
         public ResultEntity<IEnumerable<StatusEntity>> GetTicketStatuses()
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                var status = unitOfWork.StatusRepository.GetAllStatus().ToList().ToBusinessEntity();
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    var status = unitOfWork.StatusRepository.GetAllStatus().ToList().ToBusinessEntity();
 
-                return new ResultEntity<IEnumerable<StatusEntity>> { Data = status, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<IEnumerable<StatusEntity>> { Data = status, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<IEnumerable<StatusEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
         public ResultEntity<IEnumerable<PriorityEntity>> GetTicketPriorities()
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                var priority = unitOfWork.PriorityRepository.GetAllPriorities().ToList().ToBusinessEntity();
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    var priority = unitOfWork.PriorityRepository.GetAllPriorities().ToList().ToBusinessEntity();
 
-                return new ResultEntity<IEnumerable<PriorityEntity>> { Data = priority, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<IEnumerable<PriorityEntity>> { Data = priority, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<IEnumerable<PriorityEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
         public ResultEntity<IEnumerable<CategoryEntity>> GetTicketCategories()
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                var category = unitOfWork.CategoryRepository.GetAllCategories().ToList().ToBusinessEntity();
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    var category = unitOfWork.CategoryRepository.GetAllCategories().ToList().ToBusinessEntity();
 
-                return new ResultEntity<IEnumerable<CategoryEntity>> { Data = category, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<IEnumerable<CategoryEntity>> { Data = category, IsSuccess = true, Message = "Success" };
+                }
             }
+            catch (Exception e)
+            {
+                return new ResultEntity<IEnumerable<CategoryEntity>> { Data = null, IsSuccess = false, Message = e.Message };
+            }
+
         }
         public ResultEntity<IEnumerable<UserEntity>> GetTicketUsers()
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                var user = unitOfWork.UserRepository.GetAllUsers().ToList().ToBusinessEntity();
+                using (
+            var unitOfWork = new UnitOfWork())
+                {
+                    var user = unitOfWork.UserRepository.GetAllUsers().ToList().ToBusinessEntity();
 
-                return new ResultEntity<IEnumerable<UserEntity>> { Data = user, IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<IEnumerable<UserEntity>> { Data = user, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<IEnumerable<UserEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
+
         public ResultEntity<TicketEntity> InsertTicket(Ticket data)
         {
             using (

@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -28,5 +27,7 @@ namespace TicketManagement.Models
         public List<SelectListItem> TicketCategories { get; set; }
         public List<SelectListItem> TicketPriorities { get; set; }
         public List<SelectListItem> TicketAssignees { get; set; }
+        public List<string> ErrorMessages { get; set; }
+        public bool IsValid { get; set; }
     }
 }

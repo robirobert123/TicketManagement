@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TicketManagement.Models
@@ -37,5 +37,8 @@ namespace TicketManagement.Models
         public List<SelectListItem> TicketPriorities { get; set; }
         [NotMapped]
         public List<SelectListItem> TicketAssignees { get; set; }
+        [NotMapped]
+        public List<string> ErrorMessages { get; set; }
+        public bool IsValid { get; set; }
     }
 }

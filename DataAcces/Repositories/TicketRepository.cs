@@ -1,5 +1,6 @@
 ﻿using DataAcces.GenericRepository;
 using DataAcces.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataAcces.Repositories
@@ -12,9 +13,13 @@ namespace DataAcces.Repositories
         {
             _context = context;
         }
+        public IEnumerable<Ticket> GetAllTickets()
+        {
+            return _context.Tickets.Where(t => t.Deleted == false).ToList();
+        }
         public Ticket GetTicketById(int id)
         {
-            return _context.Tickets.Include("Category").FirstOrDefault(t => t.TicketID == id);
+            return _context.Tickets.FirstOrDefault(t => t.TicketID == id);
         }
         public void InsertTicket(Ticket ticket)
         {

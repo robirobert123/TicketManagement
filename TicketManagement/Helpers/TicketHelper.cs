@@ -1,15 +1,15 @@
-﻿using BusinessLogic.Entities;
+﻿using BusinessLogic.Constants;
+using BusinessLogic.Entities;
 using BusinessLogic.Handlers;
 using DataAcces;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 using TicketManagement.Models;
 
 namespace TicketManagement.Helpers
 {
     public class TicketHelper
     {
-        public TicketDetailsModel ToViewModel(TicketEntity ticketEntity)
+        public TicketDetailsModel GetDetailModel(TicketEntity ticketEntity)
         {
             var result = new TicketDetailsModel();
             result.TicketID = ticketEntity.TicketID; ;
@@ -29,49 +29,113 @@ namespace TicketManagement.Helpers
             result.AuditUser = ticketEntity.audit_User;
             return result;
         }
-        public TicketCreateModel ToCreateModel()
+        public TicketCreateModel GetCreateModel()
         {
+
             var ticketHandler = new TicketHandler();
-
-            var ticketStatuses = ticketHandler.GetTicketStatuses().Data;
-            var ticketPriorities = ticketHandler.GetTicketPriorities().Data;
-            var ticketCategories = ticketHandler.GetTicketCategories().Data;
-            var ticketUsers = ticketHandler.GetTicketUsers().Data;
-
             var model = new TicketCreateModel();
-            model.TicketPriorities = ticketPriorities.Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.PriorityID.ToString(),
-                        Text = s.PriorityName
-                    }).ToList();
+            model.IsValid = true;
 
-            model.TicketStatuses = ticketStatuses.Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.StatusID.ToString(),
-                        Text = s.StatusName
-                    }).ToList();
+            try
+            {
+                var ticketStatusesResult = ticketHandler.GetTicketStatuses();
+                var ticketCategoriesResult = ticketHandler.GetTicketCategories();
+                var ticketPrioritiesResult = ticketHandler.GetTicketPriorities();
+                var ticketUsersResult = ticketHandler.GetTicketUsers();
 
-            model.TicketCategories = ticketCategories
-                .Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.CategoryID.ToString(),
-                        Text = s.CategoryName
-                    })
-                .ToList();
+                if (!ticketStatusesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketStatusesResult.Message);
+                }
+                if (ticketStatusesResult.Data == null || ticketStatusesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_STATUSES_FOUND);
+                }
+                else
+                {
+                    model.TicketStatuses = ticketStatusesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.StatusID.ToString(),
+                                Text = s.StatusName
+                            })
+                        .ToList();
+                }
 
-            model.TicketAssignees = ticketUsers
-                .Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.Id,
-                        Text = s.FirstName + " " + s.LastName
-                    })
-                .ToList();
+                if (!ticketPrioritiesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketPrioritiesResult.Message);
+                }
+                if (ticketPrioritiesResult.Data == null || ticketPrioritiesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_PRIORITIES_FOUND);
+                }
+                else
+                {
+                    model.TicketPriorities = ticketPrioritiesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.PriorityID.ToString(),
+                                Text = s.PriorityName
+                            })
+                        .ToList();
+                }
 
+                if (!ticketCategoriesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketCategoriesResult.Message);
+                }
+                if (ticketCategoriesResult.Data == null || ticketCategoriesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_CATEGORIES_FOUND);
+                }
+                else
+                {
+                    model.TicketCategories = ticketCategoriesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.CategoryID.ToString(),
+                                Text = s.CategoryName
+                            })
+                        .ToList();
+                }
 
+                if (!ticketUsersResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketUsersResult.Message);
+                }
+                if (ticketUsersResult == null || ticketUsersResult.Data.Count() == 0)
+                {
+                    model.IsValid = true;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_USERS_FOUND);
+                }
+                else
+                {
+                    model.TicketAssignees = ticketUsersResult.Data
+                    .Select(
+                        s => new SelectListItem
+                        {
+                            Value = s.Id,
+                            Text = s.FirstName + " " + s.LastName
+                        })
+                    .ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                model.IsValid = false;
+                model.ErrorMessages.Add(e.Message);
+            }
             return model;
         }
         public Ticket ToDataEntity(TicketCreateModel ticketModel, string user)
@@ -91,68 +155,107 @@ namespace TicketManagement.Helpers
             return result;
         }
 
-        public TicketEditModel ToEditModel(TicketEntity ticket)
+        public TicketEditModel GetEditModel(TicketEntity ticket)
         {
 
             var model = new TicketEditModel();
+            var ticketHandler = new TicketHandler();
             model.Title = ticket.Title;
             model.Description = ticket.Description;
             model.CreatedDate = ticket.created_Date;
             model.CreatedUser = ticket.created_User;
-            model.CategoryID  = ticket.CategoryEntity.CategoryID; 
+            model.CategoryID = ticket.CategoryEntity.CategoryID;
             model.TicketID = ticket.TicketID;
             model.PriorityID = ticket.PriorityEntity.PriorityID;
             model.StatusID = ticket.StatusEntity.StatusID;
             model.Assignee = ticket.AssigneeEntity.Id;
 
+            try
+            {
+                var ticketStatusesResult = ticketHandler.GetTicketStatuses();
+                if (!ticketStatusesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketStatusesResult.Message);
+                }
+                if (ticketStatusesResult.Data == null || ticketStatusesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_STATUSES_FOUND);
+                }
+                else
+                {
+                    model.TicketStatuses = ticketStatusesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.StatusID.ToString(),
+                                Text = s.StatusName
+                            })
+                    .ToList();
+                }
 
-            var ticketHandler = new TicketHandler();
+                var ticketPrioritiesResult = ticketHandler.GetTicketPriorities();
+                if (!ticketPrioritiesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketPrioritiesResult.Message);
+                }
+                if (ticketPrioritiesResult.Data == null || ticketPrioritiesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_PRIORITIES_FOUND);
+                }
+                else
+                {
+                    model.TicketPriorities = ticketPrioritiesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.PriorityID.ToString(),
+                                Text = s.PriorityName
+                            })
+                    .ToList();
+                }
 
-            var ticketStatuses = ticketHandler.GetTicketStatuses().Data;
-            var ticketPriorities = ticketHandler.GetTicketPriorities().Data;
-            var ticketCategories = ticketHandler.GetTicketCategories().Data;
-            var ticketUsers = ticketHandler.GetTicketUsers().Data;
+                var ticketCategoriesResult = ticketHandler.GetTicketCategories();
+                if (!ticketCategoriesResult.IsSuccess)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ticketCategoriesResult.Message);
+                }
+                if (ticketCategoriesResult.Data == null || ticketCategoriesResult.Data.Count() == 0)
+                {
+                    model.IsValid = false;
+                    model.ErrorMessages.Add(ErrorMessages.NO_TICKET_CATEGORIES_FOUND);
+                }
+                else
+                {
+                    model.TicketCategories = ticketCategoriesResult.Data
+                        .Select(
+                            s => new SelectListItem
+                            {
+                                Value = s.CategoryID.ToString(),
+                                Text = s.CategoryName
+                            })
+                    .ToList();
+                }
 
-            model.TicketPriorities = ticketPriorities.Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.PriorityID.ToString(),
-                        Text = s.PriorityName
-                    }).ToList();
-            model.TicketPriorities.First(x => x.Value == ticket.PriorityEntity.PriorityID.ToString()).Selected = true;
-
-            model.TicketStatuses = ticketStatuses.Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.StatusID.ToString(),
-                        Text = s.StatusName
-                    }).ToList();
-            model.TicketStatuses.First(x => x.Value == ticket.StatusEntity.StatusID.ToString()).Selected = true;
-
-
-            model.TicketCategories = ticketCategories
-                .Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.CategoryID.ToString(),
-                        Text = s.CategoryName
-                    })
-                .ToList();
-            model.TicketCategories.First(x => x.Value == ticket.CategoryEntity.CategoryID.ToString()).Selected = true;
-
-
-            model.TicketAssignees = ticketUsers
-                .Select(
-                    s => new SelectListItem
-                    {
-                        Value = s.Id,
-                        Text = s.FirstName + " " + s.LastName
-                    })
-                .ToList();
-            model.TicketAssignees.First(x => x.Value == ticket.AssigneeEntity.Id).Selected = true;
-
-
-
+                var ticketUsers = ticketHandler.GetTicketUsers().Data;
+                model.TicketAssignees = ticketUsers
+                    .Select(
+                        s => new SelectListItem
+                        {
+                            Value = s.Id,
+                            Text = s.FirstName + " " + s.LastName
+                        })
+                    .ToList();
+            }
+            catch (Exception e)
+            {
+                model.IsValid = false;
+                model.ErrorMessages.Add(e.Message);
+            }
             return model;
         }
         public Ticket ToDataEntity(TicketEditModel ticketModel, string user)

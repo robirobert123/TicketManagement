@@ -15,7 +15,7 @@ namespace DataAcces.Repositories
         }
         public IEnumerable<Status> GetAllStatus()
         {
-            return _context.Status.ToList();
+            return _context.Status.Where(x => x.Name.ToLower() != "deleted").OrderBy(x => x.OrderUI).ToList();
         }
         public Status GetStatusById(int id)
         {

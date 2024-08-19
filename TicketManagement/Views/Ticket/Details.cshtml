@@ -11,50 +11,78 @@
     <link rel="stylesheet" href="~/css/styles.css">
 </head>
 <body>
-    <div class="container-create">
-        <div class = "content">
-            <h1 class="ticket-title">@Model.Title</h1>
-            <div class="ticket-section">
-                <label for="description">Description:</label>
-                <p id="description">@Model.Description</p>
+    <div class="container-details">
+        <!-- Container pentru detalii ticket -->
+        <div class="container-create">
+            <div class="content">
+                <h1 class="ticket-title">@Model.Title</h1>
+                <div class="ticket-section">
+                    <label for="TicketID">TicketID:</label>
+                    <p id="ticketID">@Model.TicketID</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="description">Description:</label>
+                    <p id="description">@Model.Description</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="priority">Priority:</label>
+                    <p id="priority">@Model.PriorityText</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="category">Category:</label>
+                    <p id="category">@Model.CategoryText</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="status">Status:</label>
+                    <p id="status">@Model.StatusText</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="created-by">Created By:</label>
+                    <p id="created-by">@Model.CreatedUser</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="created-at">Created At:</label>
+                    <p id="created-at">@Model.CreatedDate.ToString("yyyy-MM-dd")</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="assignee">Assignee:</label>
+                    <p id="assignee">@Model.AssigneeName</p>
+                </div>
+                <div class="ticket-section">
+                    <label for="last-update">Last Update:</label>
+                    <p id="last-update">@Model.AuditDate.ToString("yyyy-MM-dd")</p>
+                </div>
+                <div>
+                    <button class="edit-button" id="editbtn" asp-action="Edit" asp-route-id="@Model?.TicketID">Edit</button>
+                </div>
             </div>
-            <div class="ticket-section">
-                <label for="priority">Priority:</label>
-                <p id="priority">@Model.PriorityText</p>
-            </div>
-            <div class="ticket-section">
-                <label for="category">Category:</label>
-                <p id="category">@Model.CategoryText</p>
-            </div>
-            <div class="ticket-section">
-                <label for="status">Status:</label>
-                <p id="category">@Model.StatusText</p>
-            </div>
-            <div class="ticket-section">
-                <label for="created-by">Created By:</label>
-                <p id="created-by">@Model.CreatedUser</p>
-            </div>
-            <div class="ticket-section">
-                <label for="created-at">Created At:</label>
-                <p id="created-at">@Model.CreatedDate.ToString("yyyy-MM-dd")</p>
-            </div>
-            <div class="ticket-section">
-                <label for="assignee">Assignee:</label>
-                <p id="assignee">@Model.AssigneeName</p>
-            </div>
-            <div class="ticket-section">
-                <label for="last-update">Last Update:</label>
-                <p id="last-update">@Model.AuditDate.ToString("yyyy-MM-dd")</p>
-            </div>
-            <div>
-                <button class="edit-button" id="editbtn" asp-action="Edit" asp-route-id="@Model?.TicketID">Edit</button>
+        </div>
+
+        <!-- Container pentru chat -->
+        <div class="chat-container">
+            <h2>Comments</h2>
+            <div class="chat-box">
+                <div class="messages">
+                    <!-- Aici vor apărea mesajele -->
+                </div>
+                <input type="text" class="chat-input" placeholder="Type your message...">
+                <button class="send-button">Send</button>
             </div>
         </div>
     </div>
 </body>
 <script>
-    $('#editbtn').click(function () {
+    $(document).ready(function () {
+        $('#editbtn').click(function () {
         window.location.href = "/Ticket/Edit/@Model.TicketID";
     })
+
+     $('.send-button').click(function() {
+
+        var message = $('.chat-input').val();
+        console.log(message);
+    });
+    });
+    
 </script>
 </html>

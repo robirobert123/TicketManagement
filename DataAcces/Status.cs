@@ -22,6 +22,8 @@ namespace DataAcces
     
         public int StatusID { get; set; }
         public string Name { get; set; }
+        public int OrderUI { get; set; }
+        public bool ShowUI { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Ticket> Tickets { get; set; }

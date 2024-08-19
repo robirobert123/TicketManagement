@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\ErrorMessages.cs" />
     <Compile Include="Entities\CategoryEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="Entities\ImageEntity.cs" />

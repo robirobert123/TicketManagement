@@ -1,8 +1,135 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model TicketManagement.Models.DashboardModel
+
+@{
+    ViewBag.Title = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>User Id : @ViewData["UserID"]</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket UI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="search-bar-container" style="margin-bottom: 20px;">
+        <input type="text" id="search-bar" placeholder="Search by title..." class="form-control" style="width: 100%; padding: 10px; border-radius: 5px;">
+        <button id="search-button" class="search-button">Search</button>
+    </div>
+    <div class="filter-dropdown-container">
+        <div class="priority-text">
+            <label for="Priority">Filter By Priority:</label>
+        </div>
+        <div class="form-group">
+            @Html.DropDownList("Value", ViewBag.PrioritySelectList as SelectList, "-All-", new { @class = "form-control", @id = "filter-priority"})
+        </div>
+    </div>
+    <div class="board">
+        @foreach (var status in Model.Statuses)
+        {
+            <div class="column to-do">
+                <div class="column-header">
+                    <h2>@status.StatusName</h2>
+                    @if (status.StatusName.ToLower() == "to do")
+                    {
+                        <button type="submit" class="add-ticket-btn" id="createbtn" asp-action="Create">+</button>
+                    }
+                </div>
+                @foreach (var item in Model.TicketDetails.Where(x => x.StatusID == status.StatusID))
+                {
+                    <div class="ticket" data-ticket-id="@item.TicketID" data-priority="@item.PriorityText.ToLower()">
+                        <div class="ticket-header">
+                            <div class="ticket-title">
+                                <h3>@item.Title</h3>
+                            </div>
+                            @if (item.PriorityText.ToLower() == "high")
+                            {
+                                <span id="priorityIcon" class="priority-icon high-priority"></span>
+                            }
+                            else if (item.PriorityText.ToLower() == "medium")
+                            {
+                                <span id="priorityIcon" class="priority-icon mid-priority"></span>
+                            }
+                            else
+                            {
+                                <span id="priorityIcon" class="priority-icon low-priority"></span>
+                            }
+                        </div>
+                        <div class="tags">
+                            <span class="tag">@item.StatusText</span>
+                        </div>
+                        <div class="footer">
+                            <span class="ticket-id">ID: @item.TicketID</span>
+                            <span class="user">@item.AssigneeName</span>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        }
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        $('.ticket').click(function(){
+            var ticketID = $(this).data('ticket-id');
+            window.location.href = "/Ticket/Details/" + ticketID;
+            
+        })
+
+        $('#createbtn').click(function () {
+            window.location.href = "/Ticket/Create";
+        });
+
+        $('#search-button').click(function () {
+            var selectedPriority = $('#filter-priority').children("option:selected").text().toLowerCase();
+            var searchValue = $('#search-bar').val().toLowerCase();
+
+            $('.ticket').each(function () {
+                var ticketPriority = $(this).data('priority');
+                var title = $(this).find('.ticket-title h3').text().toLowerCase();
+
+                if (title.includes(searchValue) && (selectedPriority === ticketPriority || selectedPriority === "-all-")) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $('#search-bar').on('keyup', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                $('#search-button').click();
+            }
+        });
+
+        $('#filter-priority').on('change', function () {
+            var selectedPriority = $(this).children("option:selected").text().toLowerCase();
+            var searchValue = $('#search-bar').val().toLowerCase();
+
+            $('.ticket').each(function () {
+                var ticketPriority = $(this).data('priority');
+
+                if (searchValue === '') {
+                    if (ticketPriority === selectedPriority || selectedPriority === "-all-") {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }else {
+                    var title = $(this).find('.ticket-title h3').text().toLowerCase();
+                    console.log(title);
+                    console.log(searchValue);
+                    if (title.includes(searchValue) && (selectedPriority === ticketPriority || selectedPriority === "-all-")) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</html>
