@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using BusinessLogic.Entities;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -31,5 +32,6 @@ namespace TicketManagement.Models
         [DisplayName("Assignee:")]
         public string AssigneeName { get; set; }
         //public ICollection<ImageModel> Images { get; set; }
+        public List<CommentEntity> Comments { get; set; }
     }
 }

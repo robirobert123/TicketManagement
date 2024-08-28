@@ -17,7 +17,12 @@ namespace DataAcces
         public int ImageID { get; set; }
         public byte[] BinaryCode { get; set; }
         public int TicketID { get; set; }
+        public string UserID { get; set; }
+        public Nullable<int> CommentID { get; set; }
+        public System.DateTime PostedAt { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
+        public virtual Comment Comment { get; set; }
         public virtual Ticket Ticket { get; set; }
     }
 }

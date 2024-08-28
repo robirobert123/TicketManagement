@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Constants\ErrorMessages.cs" />
     <Compile Include="Entities\CategoryEntity.cs" />
+    <Compile Include="Entities\CommentEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="Entities\ImageEntity.cs" />
     <Compile Include="Entities\PriorityEntity.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Entities\StatusEntity.cs" />
     <Compile Include="Entities\TicketEntity.cs" />
     <Compile Include="Extensions\CategoryExtension.cs" />
+    <Compile Include="Extensions\CommentExtension.cs" />
     <Compile Include="Extensions\UserExtension.cs" />
     <Compile Include="Extensions\ImageExtension.cs" />
     <Compile Include="Extensions\PriorityExtension.cs" />

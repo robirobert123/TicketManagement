@@ -11,15 +11,17 @@ namespace DataAcces
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
-    public partial class AspNetUserLogin
+    
+    public partial class Comment
     {
-        public string LoginProvider { get; set; }
-        public string ProviderKey { get; set; }
-        public string ProviderDisplayName { get; set; }
-        public string UserId { get; set; }
+        public int CommentID { get; set; }
+        public string UserID { get; set; }
+        public string CommentText { get; set; }
+        public System.DateTime PostedAt { get; set; }
+        public int TicketID { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        public virtual Ticket Ticket { get; set; }
+        public virtual Image Image { get; set; }
     }
 }

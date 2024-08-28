@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.Areas.Identity.Data;
-using TicketManagement.Models;
 
 namespace TicketManagement.Data;
 
@@ -21,7 +19,7 @@ public class TicketManagementDbContext : IdentityDbContext<TicketManagementUser>
         // Add your customizations after calling base.OnModelCreating(builder);
     }
 
-public DbSet<TicketManagement.Models.TicketDetailsModel> TicketModel { get; set; } = default!;
+    public DbSet<TicketManagement.Models.TicketDetailsModel> TicketModel { get; set; } = default!;
 
-public DbSet<TicketManagement.Models.TicketEditModel> TicketEditModel { get; set; } = default!;
+    public DbSet<TicketManagement.Models.TicketEditModel> TicketEditModel { get; set; } = default!;
 }

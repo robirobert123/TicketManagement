@@ -20,5 +20,6 @@ namespace BusinessLogic.Entities
         public UserEntity AssigneeEntity { get; set; }
         public bool Deleted { get; set; }
         public ICollection<ImageEntity> Images { get; set; }
+        public ICollection<CommentEntity> Comments { get; set; }
     }
 }

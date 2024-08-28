@@ -39,25 +39,35 @@ namespace TicketManagement.Controllers
         }
 
         // GET: Ticket/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+
+            var ticketHandler = new TicketHandler();
             try
             {
-                var ticketHandler = new TicketHandler();
                 var ticketEntity = ticketHandler.GetTicketById(id.Value);
                 var ticketHelper = new TicketHelper();
-                var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
 
-                if (ticketModel == null)
+
+                if (!ticketEntity.IsSuccess)
                 {
-                    return NotFound();
+                    ModelState.AddModelError("Error", ticketEntity.Message);
+                    _logger.LogError(ticketEntity.Message);
                 }
+                else
+                {
+                    var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
+                    if (ticketModel == null)
+                    {
+                        return NotFound();
+                    }
 
-                return View(ticketModel);
+                    return View(ticketModel);
+                }
             }
             catch (Exception e)
             {
@@ -98,17 +108,23 @@ namespace TicketManagement.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Title,Description,PriorityID,CategoryID,StatusID,Assignee")] TicketCreateModel ticketModel)
         {
+            var handler = new TicketHandler();
             try
             {
                 var user = _userManager.GetUserAsync(User).Result;
                 var name = user.FirstName + " " + user.LastName;
                 var helper = new TicketHelper();
                 var data = helper.ToDataEntity(ticketModel, name);
+                var createdTicket = handler.InsertTicket(data);
 
-                var handler = new TicketHandler();
-                var createdTicket = handler.InsertTicket(data).Data;
-
-                return RedirectToAction("Details", new { id = createdTicket.TicketID });
+                if (!createdTicket.IsSuccess)
+                {
+                    _logger.LogError(createdTicket.Message);
+                }
+                else
+                {
+                    return RedirectToAction("Details", new { id = createdTicket.Data.TicketID });
+                }
             }
             catch (Exception e)
             {
@@ -125,13 +141,22 @@ namespace TicketManagement.Controllers
             {
                 return NotFound();
             }
+
+            var ticketHandler = new TicketHandler();
+
             try
             {
-                var ticketHandler = new TicketHandler();
                 var ticketEntity = ticketHandler.GetTicketById(id.Value);
                 var ticketHelper = new TicketHelper();
                 var ticketModel = ticketHelper.GetEditModel(ticketEntity.Data);
-                return View(ticketModel);
+                if (ticketEntity.IsSuccess)
+                {
+                    _logger.LogError(ticketEntity.Message);
+                }
+                else
+                {
+                    return View(ticketModel);
+                }
             }
             catch (Exception e)
             {
@@ -154,6 +179,8 @@ namespace TicketManagement.Controllers
                 return NotFound();
             }
 
+            var handler = new TicketHandler();
+
             try
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -161,10 +188,15 @@ namespace TicketManagement.Controllers
                 var helper = new TicketHelper();
                 var data = helper.ToDataEntity(ticketModel, name);
 
-                var handler = new TicketHandler();
-                var postedTicket = handler.UpdateTicket(data).Data;
-
-                return RedirectToAction(nameof(Details), new { id = ticketModel.TicketID });
+                var postedTicket = handler.UpdateTicket(data);
+                if (!postedTicket.IsSuccess)
+                {
+                    _logger.LogError(postedTicket.Message);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Details), new { id = ticketModel.TicketID });
+                }
             }
             catch (Exception e)
             {
@@ -212,5 +244,43 @@ namespace TicketManagement.Controllers
             return _context.TicketModel.Any(e => e.TicketID == id);
         }
 
+        public bool AddComment(int ticketId, string commentText)
+        {
+            var handler = new TicketHandler();
+            try
+            {
+                var ticket = handler.GetTicketById(ticketId);
+                if (!ticket.IsSuccess)
+                {
+                    _logger.LogError(ticket.Message);
+                }
+                else
+                {
+                    var user = _userManager.GetUserAsync(User).Result;
+                    var comment = new Comment
+                    {
+                        CommentText = commentText,
+                        TicketID = ticketId,
+                        UserID = user.Id,
+                        PostedAt = DateTime.Now
+                    };
+                    var insertedComment = handler.InsertTicketComment(comment);
+                    if (!insertedComment.IsSuccess)
+                    {
+                        _logger.LogError(insertedComment.Message);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while adding comment to ticket ID");
+                return false;
+            }
+        }
     }
 }

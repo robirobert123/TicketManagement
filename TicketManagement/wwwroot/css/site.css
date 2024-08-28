@@ -209,8 +209,10 @@ header {
 }
 
 .message {
+    display: flex;
+    align-items: flex-start;
     background-color: #007bff;
-    color: white;
+    color: black;
     padding: 8px 12px;
     border-radius: 20px;
     margin-bottom: 10px;
@@ -222,6 +224,14 @@ header {
 .message.received {
     align-self: flex-start;
     background-color: #007bff;
+}
+
+.message-content {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 70%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .chat-input {
@@ -362,6 +372,30 @@ header {
 .user {
     font-size: 12px;
     color: #333;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #007bff; /* Culoare de fundal pentru bulină */
+    border-radius: 50%; /* Transformă div-ul într-o bulină */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px; /* Ajustează dimensiunea fontului pentru inițiale */
+}
+
+.initials {
+    font-size: 16px; /* Dimensiunea fontului pentru inițiale */
+}
+.message-meta {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    text-align: right;
 }
 
 .ticket-id {

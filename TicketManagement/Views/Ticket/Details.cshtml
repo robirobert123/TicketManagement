@@ -8,11 +8,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="~/css/styles.css">
 </head>
 <body>
     <div class="container-details">
-        <!-- Container pentru detalii ticket -->
         <div class="container-create">
             <div class="content">
                 <h1 class="ticket-title">@Model.Title</h1>
@@ -58,12 +56,22 @@
             </div>
         </div>
 
-        <!-- Container pentru chat -->
         <div class="chat-container">
             <h2>Comments</h2>
             <div class="chat-box">
                 <div class="messages">
-                    <!-- Aici vor apărea mesajele -->
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="message received">
+                            <div class="avatar">
+                                <span class="initials">@comment.CommentUser.Substring(0, 1).ToUpper()</span>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-text">@comment.CommentText</div>
+                                <div class="message-meta">@comment.CommentDate.ToString("yyyy-MM-dd HH:mm")</div>
+                            </div>
+                        </div>
+                    }
                 </div>
                 <input type="text" class="chat-input" placeholder="Type your message...">
                 <button class="send-button">Send</button>
@@ -74,14 +82,32 @@
 <script>
     $(document).ready(function () {
         $('#editbtn').click(function () {
-        window.location.href = "/Ticket/Edit/@Model.TicketID";
-    })
+            window.location.href = "/Ticket/Edit/@Model.TicketID";
+        })
 
-     $('.send-button').click(function() {
+        $('.send-button').click(function() {
+            var message = $('.chat-input').val();
 
-        var message = $('.chat-input').val();
-        console.log(message);
-    });
+            var dataArray = {
+                "ticketId" : @Model.TicketID,
+                "commentText" : message
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Ticket/AddComment",
+                data: $.param(dataArray),
+                cache: false,
+                success: function (svr_resp) {
+                    if (svr_resp == '1') { 
+                        
+                    } else {
+                        alert("Error: Data not captured on the server.");
+                    }
+                }
+            });
+        });
+
     });
     
 </script>

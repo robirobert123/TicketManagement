@@ -27,6 +27,7 @@ namespace TicketManagement.Helpers
             result.AssigneeName = ticketEntity.AssigneeEntity.FirstName + " " + ticketEntity.AssigneeEntity.LastName;
             result.CreatedUser = ticketEntity.created_User;
             result.AuditUser = ticketEntity.audit_User;
+            result.Comments = ticketEntity.Comments.ToList();
             return result;
         }
         public TicketCreateModel GetCreateModel()

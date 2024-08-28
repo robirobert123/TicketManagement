@@ -11,6 +11,7 @@ namespace DataAcces.Repositories.Interfaces
         IRoleRepository RoleRepository { get; }
         IStatusRepository StatusRepository { get; }
         ITicketRepository TicketRepository { get; }
+        ICommentRepository CommentRepository { get; }
 
         void Save();
     }

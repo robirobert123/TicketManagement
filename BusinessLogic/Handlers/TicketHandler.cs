@@ -116,23 +116,58 @@ namespace BusinessLogic.Handlers
 
         public ResultEntity<TicketEntity> InsertTicket(Ticket data)
         {
-            using (
-                var unitOfWork = new UnitOfWork())
+            try
             {
-                unitOfWork.TicketRepository.InsertTicket(data);
-                unitOfWork.Save();
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.TicketRepository.InsertTicket(data);
+                    unitOfWork.Save();
 
-                return new ResultEntity<TicketEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Success" };
+                    return new ResultEntity<TicketEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Success" };
+                }
             }
+            catch (Exception e)
+            {
+                return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = e.Message };
+            }
+
         }
         public ResultEntity<TicketEntity> UpdateTicket(Ticket data)
         {
-            using (var unitOfWork = new UnitOfWork())
+            try
             {
-                unitOfWork.TicketRepository.UpdateTicket(data);
-                unitOfWork.Save();
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.TicketRepository.UpdateTicket(data);
+                    unitOfWork.Save();
+                }
+                return new ResultEntity<TicketEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Succes" };
             }
-            return new ResultEntity<TicketEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Succes" };
+            catch (Exception e)
+            {
+                return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = e.Message };
+            }
+
+
+        }
+        public ResultEntity<CommentEntity> InsertTicketComment(Comment data)
+        {
+            try
+            {
+                using (
+                var unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.CommentRepository.InsertComment(data);
+                    unitOfWork.Save();
+
+                    return new ResultEntity<CommentEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<CommentEntity> { Data = null, IsSuccess = false, Message = e.Message };
+            }
 
         }
     }

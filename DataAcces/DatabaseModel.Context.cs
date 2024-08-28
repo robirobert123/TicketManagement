@@ -33,6 +33,7 @@ namespace DataAcces
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<Priority> Priorities { get; set; }
         public virtual DbSet<Status> Status { get; set; }

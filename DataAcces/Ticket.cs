@@ -17,6 +17,7 @@ namespace DataAcces
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Ticket()
         {
+            this.Comments = new HashSet<Comment>();
             this.Images = new HashSet<Image>();
         }
     
@@ -35,6 +36,8 @@ namespace DataAcces
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Category Category { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Comment> Comments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Image> Images { get; set; }
         public virtual Priority Priority { get; set; }

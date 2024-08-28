@@ -27,7 +27,8 @@ namespace BusinessLogic.Extensions
                 Deleted = dataAccess.Deleted,
                 created_User = dataAccess.created_User,
                 audit_User = dataAccess.audit_User,
-                Images = dataAccess.Images.ToBusinessEntity()
+                Images = dataAccess.Images.ToBusinessEntity(),
+                Comments = dataAccess.Comments.ToBusinessEntity()
             };
         }
         internal static Ticket ToDataAccessEntity(this TicketEntity businessEntity)
@@ -51,7 +52,8 @@ namespace BusinessLogic.Extensions
                 Deleted = businessEntity.Deleted,
                 created_User = businessEntity.created_User,
                 audit_User = businessEntity.audit_User,
-                Images = businessEntity.Images.ToDataAccessEntity()
+                Images = businessEntity.Images.ToDataAccessEntity(),
+                Comments = businessEntity.Comments.ToDataAccessEntity()
             };
         }
         internal static ICollection<TicketEntity> ToBusinessEntity(this ICollection<Ticket> dataAccess)
@@ -66,7 +68,6 @@ namespace BusinessLogic.Extensions
             {
                 result.Add(item.ToBusinessEntity());
             }
-
             return result;
         }
         internal static ICollection<Ticket> ToDataAccessEntity(this ICollection<TicketEntity> businessEntity)
@@ -81,7 +82,6 @@ namespace BusinessLogic.Extensions
             {
                 result.Add(item.ToDataAccessEntity());
             }
-
             return result;
         }
     }

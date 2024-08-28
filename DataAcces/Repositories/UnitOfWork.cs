@@ -12,6 +12,7 @@ namespace DataAcces.Repositories
         public IRoleRepository roleRepository;
         public IUserRepository userRepository;
         public ICategoryRepository categoryRepository;
+        public ICommentRepository commentRepository;
 
         public ITicketRepository TicketRepository
         {
@@ -88,6 +89,17 @@ namespace DataAcces.Repositories
                     this.categoryRepository = new CategoryRepository(_context);
                 }
                 return categoryRepository;
+            }
+        }
+        public ICommentRepository CommentRepository
+        {
+            get
+            {
+                if (this.commentRepository == null)
+                {
+                    this.commentRepository = new CommentRepository(_context);
+                }
+                return commentRepository;
             }
         }
         public void Save()
