@@ -113,7 +113,6 @@ namespace BusinessLogic.Handlers
                 return new ResultEntity<IEnumerable<UserEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
-
         public ResultEntity<TicketEntity> InsertTicket(Ticket data)
         {
             try
@@ -169,6 +168,29 @@ namespace BusinessLogic.Handlers
                 return new ResultEntity<CommentEntity> { Data = null, IsSuccess = false, Message = e.Message };
             }
 
+        }
+        public ResultEntity<TicketEntity> DeleteTicket(int ticketId)
+        {
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var ticket = unitOfWork.TicketRepository.Get(ticketId);
+                    if (ticket == null)
+                    {
+                        return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = "Ticket not found" };
+                    }
+
+                    unitOfWork.TicketRepository.Delete(ticketId);
+                    unitOfWork.Save();
+
+                    return new ResultEntity<TicketEntity> { Data = null, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = e.Message };
+            }
         }
     }
 }

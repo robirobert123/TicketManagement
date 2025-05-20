@@ -214,14 +214,33 @@ namespace TicketManagement.Controllers
                 return NotFound();
             }
 
-            var ticketModel = await _context.TicketModel
-                .FirstOrDefaultAsync(m => m.TicketID == id);
-            if (ticketModel == null)
+            var ticketHandler = new TicketHandler();
+            try
             {
-                return NotFound();
-            }
+                var ticketEntity = ticketHandler.GetTicketById(id.Value);
+                var ticketHelper = new TicketHelper();
 
-            return View(ticketModel);
+                if (!ticketEntity.IsSuccess)
+                {
+                    ModelState.AddModelError("Error", ticketEntity.Message);
+                    _logger.LogError(ticketEntity.Message);
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
+                if (ticketModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticketModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while getting ticket for deletion");
+                ModelState.AddModelError("Error", e.Message);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Ticket/Delete/5
@@ -229,14 +248,25 @@ namespace TicketManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticketModel = await _context.TicketModel.FindAsync(id);
-            if (ticketModel != null)
+            var ticketHandler = new TicketHandler();
+            try
             {
-                _context.TicketModel.Remove(ticketModel);
+                var result = ticketHandler.DeleteTicket(id);
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError(result.Message);
+                    ModelState.AddModelError("Error", result.Message);
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+                
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while deleting ticket ID {0}", id);
+                ModelState.AddModelError("Error", e.Message);
+                return RedirectToAction(nameof(Details), new { id });
+            }
         }
 
         private bool TicketModelExists(int id)
