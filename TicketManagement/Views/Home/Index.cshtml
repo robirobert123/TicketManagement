@@ -8,7 +8,9 @@
     <div class="search-bar-wrapper">
         <div class="search-container">
             <input type="text" id="search-input" placeholder="Search tickets...">
-            <button id="search-button" class="btn-search">Search</button>
+            <button id="search-button" class="btn-search">
+                <i class="bi bi-search"></i>
+            </button>
         </div>
         <div class="filter-dropdown">
             <span>Filter by:</span>
@@ -22,41 +24,41 @@
         </div>
     </div>
 
+    <!-- Status Cards Row -->
     <div class="status-cards">
         <div class="status-card todo">
             <div class="status-icon">
-                <i class="fas fa-clipboard-list"></i>
+                <i class="bi bi-list-check"></i>
             </div>
             <div class="status-name">To Do</div>
             <div class="status-count">@Model.TicketDetails.Count(t => t.StatusText == "To Do" || t.StatusText == "Open")</div>
         </div>
-        
         <div class="status-card in-progress">
             <div class="status-icon">
-                <i class="fas fa-spinner"></i>
+                <i class="bi bi-arrow-repeat"></i>
             </div>
             <div class="status-name">In Progress</div>
             <div class="status-count">@Model.TicketDetails.Count(t => t.StatusText == "In Progress")</div>
         </div>
-        
         <div class="status-card testing">
             <div class="status-icon">
-                <i class="fas fa-vial"></i>
+                <i class="bi bi-check2-circle"></i>
             </div>
             <div class="status-name">Testing</div>
             <div class="status-count">@Model.TicketDetails.Count(t => t.StatusText == "Testing")</div>
         </div>
-        
         <div class="status-card done">
             <div class="status-icon">
-                <i class="fas fa-check-circle"></i>
+                <i class="bi bi-check2-all"></i>
             </div>
             <div class="status-name">Done</div>
             <div class="status-count">@Model.TicketDetails.Count(t => t.StatusText == "Closed" || t.StatusText == "Done")</div>
         </div>
     </div>
 
+    <!-- Ticket Board -->
     <div class="board-container">
+        <!-- To Do Column -->
         <div class="board-column">
             <div class="column-header">
                 <h2>To Do</h2>
@@ -86,7 +88,7 @@
                                 }
                                 else
                                 {
-                                    <i class="fas fa-user"></i>
+                                    <i class="bi bi-person"></i>
                                 }
                             </div>
                             <span>@(string.IsNullOrEmpty(ticket.AssigneeName) ? "Unassigned" : ticket.AssigneeName)</span>
@@ -96,6 +98,7 @@
             </div>
         </div>
 
+        <!-- In Progress Column -->
         <div class="board-column">
             <div class="column-header">
                 <h2>In Progress</h2>
@@ -125,7 +128,7 @@
                                 }
                                 else
                                 {
-                                    <i class="fas fa-user"></i>
+                                    <i class="bi bi-person"></i>
                                 }
                             </div>
                             <span>@(string.IsNullOrEmpty(ticket.AssigneeName) ? "Unassigned" : ticket.AssigneeName)</span>
@@ -135,6 +138,7 @@
             </div>
         </div>
 
+        <!-- Testing Column -->
         <div class="board-column">
             <div class="column-header">
                 <h2>Testing</h2>
@@ -164,7 +168,7 @@
                                 }
                                 else
                                 {
-                                    <i class="fas fa-user"></i>
+                                    <i class="bi bi-person"></i>
                                 }
                             </div>
                             <span>@(string.IsNullOrEmpty(ticket.AssigneeName) ? "Unassigned" : ticket.AssigneeName)</span>
@@ -174,9 +178,10 @@
             </div>
         </div>
 
+        <!-- Done Column -->
         <div class="board-column">
             <div class="column-header">
-                <h2>Closed</h2>
+                <h2>Done</h2>
                 <span class="ticket-count">@Model.TicketDetails.Count(t => t.StatusText == "Closed" || t.StatusText == "Done")</span>
             </div>
             <div class="column-content">
@@ -203,7 +208,7 @@
                                 }
                                 else
                                 {
-                                    <i class="fas fa-user"></i>
+                                    <i class="bi bi-person"></i>
                                 }
                             </div>
                             <span>@(string.IsNullOrEmpty(ticket.AssigneeName) ? "Unassigned" : ticket.AssigneeName)</span>
@@ -215,7 +220,7 @@
     </div>
 
     <a href="@Url.Action("Create", "Ticket")" class="btn-create-ticket">
-        <i class="fas fa-plus"></i>
+        <i class="bi bi-plus"></i>
     </a>
 </div>
 
