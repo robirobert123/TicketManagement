@@ -115,6 +115,7 @@ header {
     width: 35%; 
 }
 
+
 .filter-dropdown-container {
     display: flex;
     align-items: center;
@@ -388,9 +389,7 @@ header {
     font-size: 18px; /* Ajustează dimensiunea fontului pentru inițiale */
 }
 
-.initials {
-    font-size: 16px; /* Dimensiunea fontului pentru inițiale */
-}
+
 .message-meta {
     font-size: 12px;
     color: #666;

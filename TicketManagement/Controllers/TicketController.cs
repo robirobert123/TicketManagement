@@ -149,7 +149,7 @@ namespace TicketManagement.Controllers
                 var ticketEntity = ticketHandler.GetTicketById(id.Value);
                 var ticketHelper = new TicketHelper();
                 var ticketModel = ticketHelper.GetEditModel(ticketEntity.Data);
-                if (ticketEntity.IsSuccess)
+                if (!ticketEntity.IsSuccess)
                 {
                     _logger.LogError(ticketEntity.Message);
                 }

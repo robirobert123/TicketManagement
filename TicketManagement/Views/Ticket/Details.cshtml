@@ -64,7 +64,7 @@
                     {
                         <div class="message received">
                             <div class="avatar">
-                                <span class="initials">@comment.CommentUser.Substring(0, 1).ToUpper()</span>
+                                <span class="initials"></span>
                             </div>
                             <div class="message-content">
                                 <div class="message-text">@comment.CommentText</div>
@@ -107,7 +107,19 @@
                 }
             });
         });
+        document.querySelector('.initials').forEach(function (span) {
+            const fullName = span.dataset.fullName || '';
+            const names = fullName.trim().split(' ');
+            let initials = '?';
 
+            if (name.length >= 2) {
+                initials = (names[0][0] + names[1][0]).toUpperCase();
+            } else if (names.length === 1) {
+                initials = names[0][0].toUpperCase();
+            }
+
+            span.innerText = initials;
+        });
     });
     
 </script>
