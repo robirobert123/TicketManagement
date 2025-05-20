@@ -220,6 +220,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script>
         $(document).ready(function() {
             // Search functionality
@@ -265,7 +266,99 @@
                 const ticketId = $(this).data("id");
                 window.location.href = '@Url.Action("Details", "Ticket")/' + ticketId;
             });
+            
+            // Initialize drag and drop for each column
+            const columns = document.querySelectorAll('.column-content');
+            
+            columns.forEach((column, index) => {
+                new Sortable(column, {
+                    group: 'tickets',
+                    animation: 150,
+                    ghostClass: 'ticket-card-ghost',
+                    chosenClass: 'ticket-card-chosen',
+                    dragClass: 'ticket-card-drag',
+                    onEnd: function(evt) {
+                        const ticketId = evt.item.getAttribute('data-id');
+                        const newStatus = getStatusFromColumnIndex(evt.to.parentElement.querySelector('.column-header h2').textContent.trim());
+                        
+                        if (ticketId && newStatus) {
+                            updateTicketStatus(ticketId, newStatus);
+                        }
+                    }
+                });
+            });
+            
+            // Get status ID from column name
+            function getStatusFromColumnIndex(columnName) {
+                switch(columnName) {
+                    case 'To Do':
+                        return 1004; // Assuming 1 is the ID for "To Do" status
+                    case 'In Progress':
+                        return 1005; // Assuming 2 is the ID for "In Progress" status
+                    case 'Testing':
+                        return 1008; // Assuming 3 is the ID for "Testing" status
+                    case 'Closed':
+                        return 1006; // Assuming 4 is the ID for "Closed" status
+                    case 'Deleted':
+                        return 1007;
+                    default:
+                        return null;
+                }
+            }
+            
+            // Update ticket status via AJAX
+            function updateTicketStatus(ticketId, statusId) {
+                // Prevent navigation when dragging
+                $('.ticket-card').off('click').on('click', function(e) {
+                    const ticketId = $(this).data("id");
+                    window.location.href = '@Url.Action("Details", "Ticket")/' + ticketId;
+                });
+                
+                $.ajax({
+                    url: '@Url.Action("UpdateStatus", "Ticket")',
+                    type: 'POST',
+                    data: {
+                        ticketId: ticketId,
+                        statusId: statusId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update was successful
+                            updateCounters();
+                        } else {
+                            // Handle error
+                            alert('Error updating ticket status: ' + response.message);
+                            // Refresh the page to reset the board
+                            location.reload();
+                        }
+                    },
+                    error: function() {
+                        alert('Error updating ticket status. Please try again.');
+                        // Refresh the page to reset the board
+                        location.reload();
+                    }
+                });
+            }
+            
+            // Update the counters after drag and drop
+            function updateCounters() {
+                const todoCount = $('.board-column:nth-child(1) .ticket-card').length;
+                const inProgressCount = $('.board-column:nth-child(2) .ticket-card').length;
+                const testingCount = $('.board-column:nth-child(3) .ticket-card').length;
+                const closedCount = $('.board-column:nth-child(4) .ticket-card').length;
+                
+                // Update status cards
+                $('.status-card.todo .status-count').text(todoCount);
+                $('.status-card.in-progress .status-count').text(inProgressCount);
+                $('.status-card.testing .status-count').text(testingCount);
+                $('.status-card.done .status-count').text(closedCount);
+                
+                // Update column headers
+                $('.board-column:nth-child(1) .ticket-count').text(todoCount);
+                $('.board-column:nth-child(2) .ticket-count').text(inProgressCount);
+                $('.board-column:nth-child(3) .ticket-count').text(testingCount);
+                $('.board-column:nth-child(4) .ticket-count').text(closedCount);
+            }
         });
     </script>
-    }
 }

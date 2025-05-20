@@ -226,7 +226,7 @@ namespace TicketManagement.Controllers
                     _logger.LogError(ticketEntity.Message);
                     return RedirectToAction(nameof(Index));
                 }
-                
+
                 var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
                 if (ticketModel == null)
                 {
@@ -258,7 +258,7 @@ namespace TicketManagement.Controllers
                     ModelState.AddModelError("Error", result.Message);
                     return RedirectToAction(nameof(Details), new { id });
                 }
-                
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -310,6 +310,57 @@ namespace TicketManagement.Controllers
             {
                 _logger.LogError(e, "Error while adding comment to ticket ID");
                 return false;
+            }
+        }
+
+        // POST: Ticket/UpdateStatus
+        [HttpPost]
+        public IActionResult UpdateStatus(int ticketId, int statusId)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var ticketEntity = ticketHandler.GetTicketById(ticketId);
+
+                if (!ticketEntity.IsSuccess || ticketEntity.Data == null)
+                {
+                    return Json(new { success = false, message = "Ticket not found" });
+                }
+
+                var user = _userManager.GetUserAsync(User).Result;
+                var name = user.FirstName + " " + user.LastName;
+
+                var ticket = ticketEntity.Data;
+                ticket.StatusEntity.StatusID = statusId;
+
+                var helper = new TicketHelper();
+                var data = helper.ToDataEntity(new TicketEditModel
+                {
+                    TicketID = ticket.TicketID,
+                    Title = ticket.Title,
+                    Description = ticket.Description,
+                    PriorityID = ticket.PriorityEntity.PriorityID,
+                    CategoryID = ticket.CategoryEntity.CategoryID,
+                    StatusID = statusId,
+                    Assignee = ticket.AssigneeEntity?.Id,
+                    CreatedDate = ticket.created_Date,
+                    CreatedUser = ticket.created_User
+                }, name);
+
+                var result = ticketHandler.UpdateTicket(data);
+
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError(result.Message);
+                    return Json(new { success = false, message = result.Message });
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating ticket status");
+                return Json(new { success = false, message = ex.Message });
             }
         }
     }
