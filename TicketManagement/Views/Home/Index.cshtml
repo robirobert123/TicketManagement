@@ -228,8 +228,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Search functionality
-            $("#search-button").click(function() {
+            // Search function
+            function performSearch() {
                 const searchTerm = $("#search-input").val().toLowerCase();
                 
                 if (searchTerm === '') {
@@ -246,6 +246,19 @@
                         $(this).hide();
                     }
                 });
+            }
+            
+            // Search button click
+            $("#search-button").click(function() {
+                performSearch();
+            });
+            
+            // Search on Enter key press
+            $("#search-input").keypress(function(e) {
+                if (e.which === 13) { // Enter key code
+                    e.preventDefault();
+                    performSearch();
+                }
             });
             
             // Status filter
