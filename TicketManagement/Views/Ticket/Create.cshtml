@@ -1,70 +1,94 @@
 ﻿@model TicketManagement.Models.TicketCreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Ticket";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="~/css/styles.css">
-</head>
-<body>
-    <h2 class="head-title">Create Ticket</h2>
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div>
-            @Html.ValidationSummary(false, "Please check the following errors:", htmlAttributes: new { @class = "" })
+<div class="dashboard-wrapper">
+    <div class="create-ticket-container">
+        <div class="create-header">
+            <h2><i class="bi bi-ticket-perforated-fill"></i> Create New Ticket</h2>
+            <p>Fill in the details below to create a new support ticket</p>
         </div>
-    }
-    else
-    {
-        <div class="container-create row">
-            <div class="col-md-4">
-                <form class="form-label" asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-error">
+                <div class="alert-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div class="alert-content">
+                    @Html.ValidationSummary(false, "Please check the following errors:", htmlAttributes: new { @class = "validation-list" })
+                </div>
+            </div>
+        }
+
+        <div class="create-form-container">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-row">
                     <div class="form-group">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" />
+                        <label asp-for="Title">
+                            <i class="bi bi-type"></i> Title
+                        </label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter ticket title" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <input asp-for="Description" class="form-control" />
+                        <label asp-for="Description">
+                            <i class="bi bi-text-paragraph"></i> Description
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the issue in detail"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="PriorityID" class="control-label"></label>
-                        @* <select asp-for="PriorityID" name="priorityList" asp-items="Model.TicketPriorities"></select> *@
-                        @Html.DropDownListFor(model => model.PriorityID, Model.TicketPriorities, new { @class = "drop-down", @id = "priority-dropdown" })
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="CategoryID" class="control-label"></label>
-                        @* <select asp-for="CategoryID" name="categoryList" asp-items="Model.TicketCategories"></select> *@
-                        @Html.DropDownListFor(model => model.CategoryID, Model.TicketCategories, new { @class = "drop-down", @id = "category-dropdown" })
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="StatusID" class="control-label"></label>
-                        @* <select asp-for="StatusID" name="statusList" asp-items="Model.TicketStatuses"></select> *@
-                        @Html.DropDownListFor(model => model.StatusID, Model.TicketStatuses, new { @class = "drop-down", @id = "status-dropdown" })
+                </div>
 
-                    </div>
+                <div class="form-row two-columns">
                     <div class="form-group">
-                        <label asp-for="Assignee" class="control-label"></label>
-                        @* <select asp-for="Assignee" name="assigneeList" asp-items="Model.TicketAssignees"></select> *@
-                        @Html.DropDownListFor(model => model.Assignee, Model.TicketAssignees, new { @class = "drop-down", @id = "assignee-dropdown" })
+                        <label asp-for="PriorityID">
+                            <i class="bi bi-flag-fill"></i> Priority
+                        </label>
+                        @Html.DropDownListFor(model => model.PriorityID, Model.TicketPriorities, new { @class = "form-select" })
                     </div>
-                    <div>
-                        <button type="submit" class="edit-button">Create</button>
+
+                    <div class="form-group">
+                        <label asp-for="CategoryID">
+                            <i class="bi bi-tag-fill"></i> Category
+                        </label>
+                        @Html.DropDownListFor(model => model.CategoryID, Model.TicketCategories, new { @class = "form-select" })
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="form-row two-columns">
+                    <div class="form-group">
+                        <label asp-for="StatusID">
+                            <i class="bi bi-kanban"></i> Status
+                        </label>
+                        @Html.DropDownListFor(model => model.StatusID, Model.TicketStatuses, new { @class = "form-select", @id = "status-dropdown" })
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Assignee">
+                            <i class="bi bi-person-fill"></i> Assignee
+                        </label>
+                        @Html.DropDownListFor(model => model.Assignee, Model.TicketAssignees, new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="@Url.Action("Index", "Home")" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-create">
+                        <i class="bi bi-check-lg"></i> Create Ticket
+                    </button>
+                </div>
+            </form>
         </div>
-    }
-</body>
-</html>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         var textToSelect = "To Do";

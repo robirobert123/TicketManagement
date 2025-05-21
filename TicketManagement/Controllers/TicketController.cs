@@ -363,5 +363,98 @@ namespace TicketManagement.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        // Add this new endpoint to get dropdown options
+        [HttpGet]
+        public IActionResult GetDropdownOptions(int ticketId)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var ticketHelper = new TicketHelper();
+                
+                // Get all dropdown options
+                var ticketStatusesResult = ticketHandler.GetTicketStatuses();
+                var ticketCategoriesResult = ticketHandler.GetTicketCategories();
+                var ticketPrioritiesResult = ticketHandler.GetTicketPriorities();
+                var ticketUsersResult = ticketHandler.GetTicketUsers();
+                
+                // Format for select lists
+                var statuses = ticketStatusesResult.Data.Select(s => new { value = s.StatusID.ToString(), text = s.StatusName }).ToList();
+                var categories = ticketCategoriesResult.Data.Select(c => new { value = c.CategoryID.ToString(), text = c.CategoryName }).ToList();
+                var priorities = ticketPrioritiesResult.Data.Select(p => new { value = p.PriorityID.ToString(), text = p.PriorityName }).ToList();
+                var assignees = ticketUsersResult.Data.Select(u => new { value = u.Id, text = u.FirstName + " " + u.LastName }).ToList();
+                
+                // Add "Unassigned" option to assignees
+                assignees.Insert(0, new { value = "", text = "Unassigned" });
+                
+                return Json(new { 
+                    statuses = statuses,
+                    categories = categories,
+                    priorities = priorities,
+                    assignees = assignees
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting dropdown options");
+                return Json(new { error = "Failed to load dropdown options" });
+            }
+        }
+
+        // Add this new endpoint to handle inline updates
+        [HttpPost]
+        public IActionResult UpdateInline(int TicketID, string Title, string Description, 
+            int PriorityID, int CategoryID, int StatusID, string Assignee, 
+            DateTime CreatedDate, string CreatedUser)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var user = _userManager.GetUserAsync(User).Result;
+                var name = user.FirstName + " " + user.LastName;
+                
+                // Create ticket data entity
+                var ticket = new Ticket
+                {
+                    TicketID = TicketID,
+                    Title = Title,
+                    Description = Description,
+                    PriorityID = PriorityID,
+                    CategoryID = CategoryID,
+                    StatusID = StatusID,
+                    Assignee = Assignee,
+                    created_Date = CreatedDate,
+                    created_User = CreatedUser,
+                    audit_Date = DateTime.Now,
+                    audit_User = name,
+                    Deleted = false
+                };
+                
+                // Update ticket
+                var result = ticketHandler.UpdateTicket(ticket);
+                
+                if (result.IsSuccess)
+                {
+                    // Get updated ticket to return updated values
+                    var updatedTicket = ticketHandler.GetTicketById(TicketID);
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = "Ticket updated successfully",
+                        auditDate = updatedTicket.Data.audit_Date.ToString("yyyy-MM-dd")
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, message = result.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating ticket inline");
+                return Json(new { success = false, message = "An error occurred while updating the ticket" });
+            }
+        }
     }
 }

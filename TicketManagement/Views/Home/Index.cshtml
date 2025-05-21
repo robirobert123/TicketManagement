@@ -67,7 +67,7 @@
             <div class="column-content">
                 @foreach (var ticket in Model.TicketDetails.Where(t => t.StatusText == "To Do" || t.StatusText == "Open"))
                 {
-                    <div class="ticket-card" data-id="@ticket.TicketID">
+                    <div class="ticket-card" data-id="@ticket.TicketID" data-status-id="@ticket.StatusID">
                         <div class="ticket-header">
                             <h3 class="ticket-title">@ticket.Title</h3>
                             <span class="ticket-id">#@ticket.TicketID</span>
@@ -107,7 +107,7 @@
             <div class="column-content">
                 @foreach (var ticket in Model.TicketDetails.Where(t => t.StatusText == "In Progress"))
                 {
-                    <div class="ticket-card" data-id="@ticket.TicketID">
+                    <div class="ticket-card" data-id="@ticket.TicketID" data-status-id="@ticket.StatusID">
                         <div class="ticket-header">
                             <h3 class="ticket-title">@ticket.Title</h3>
                             <span class="ticket-id">#@ticket.TicketID</span>
@@ -147,7 +147,7 @@
             <div class="column-content">
                 @foreach (var ticket in Model.TicketDetails.Where(t => t.StatusText == "Testing"))
                 {
-                    <div class="ticket-card" data-id="@ticket.TicketID">
+                    <div class="ticket-card" data-id="@ticket.TicketID" data-status-id="@ticket.StatusID">
                         <div class="ticket-header">
                             <h3 class="ticket-title">@ticket.Title</h3>
                             <span class="ticket-id">#@ticket.TicketID</span>
@@ -187,7 +187,7 @@
             <div class="column-content">
                 @foreach (var ticket in Model.TicketDetails.Where(t => t.StatusText == "Closed" || t.StatusText == "Done"))
                 {
-                    <div class="ticket-card" data-id="@ticket.TicketID">
+                    <div class="ticket-card" data-id="@ticket.TicketID" data-status-id="@ticket.StatusID">
                         <div class="ticket-header">
                             <h3 class="ticket-title">@ticket.Title</h3>
                             <span class="ticket-id">#@ticket.TicketID</span>
@@ -261,22 +261,37 @@
                 }
             });
             
-            // Status filter
-            $("#filter-status").change(function() {
-                const selectedStatus = $(this).val();
+            // Apply filter based on selected status
+            function applyStatusFilter() {
+                const selectedStatus = $("#filter-status").val();
                 
                 if (selectedStatus === 'all') {
+                    // Show all columns and tickets
                     $(".board-column").show();
-                    return;
+                    $(".ticket-card").show();
+                } else {
+                    // Show all columns first
+                    $(".board-column").show();
+                    
+                    // Hide tickets that don't match the selected status
+                    $(".ticket-card").each(function() {
+                        const ticketStatusId = $(this).data("status-id");
+                        
+                        if (ticketStatusId == selectedStatus) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
                 }
                 
-                $(".board-column").each(function(index) {
-                    if (index + 1 == selectedStatus) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
+                // Always update counters after applying filter
+                updateCounters();
+            }
+            
+            // Status filter change event
+            $("#filter-status").change(function() {
+                applyStatusFilter();
             });
             
             // Make ticket cards clickable
@@ -301,6 +316,12 @@
                         
                         if (ticketId && newStatus) {
                             updateTicketStatus(ticketId, newStatus);
+                            
+                            // Update the status-id data attribute on the ticket card
+                            $(evt.item).attr('data-status-id', newStatus);
+                            
+                            // Reapply the current filter after status update
+                            applyStatusFilter();
                         }
                     }
                 });
@@ -310,15 +331,13 @@
             function getStatusFromColumnIndex(columnName) {
                 switch(columnName) {
                     case 'To Do':
-                        return 1004; // Assuming 1 is the ID for "To Do" status
+                        return 1004; // ID for "To Do" status
                     case 'In Progress':
-                        return 1005; // Assuming 2 is the ID for "In Progress" status
+                        return 1005; // ID for "In Progress" status
                     case 'Testing':
-                        return 1008; // Assuming 3 is the ID for "Testing" status
-                    case 'Closed':
-                        return 1006; // Assuming 4 is the ID for "Closed" status
-                    case 'Deleted':
-                        return 1007;
+                        return 1008; // ID for "Testing" status
+                    case 'Done':
+                        return 1006; // ID for "Done/Closed" status
                     default:
                         return null;
                 }
@@ -360,23 +379,27 @@
             
             // Update the counters after drag and drop
             function updateCounters() {
-                const todoCount = $('.board-column:nth-child(1) .ticket-card').length;
-                const inProgressCount = $('.board-column:nth-child(2) .ticket-card').length;
-                const testingCount = $('.board-column:nth-child(3) .ticket-card').length;
-                const closedCount = $('.board-column:nth-child(4) .ticket-card').length;
+                // Count all tickets in each column (not just visible ones)
+                const todoCount = $('.board-column:nth-child(1) .column-content .ticket-card').length;
+                const inProgressCount = $('.board-column:nth-child(2) .column-content .ticket-card').length;
+                const testingCount = $('.board-column:nth-child(3) .column-content .ticket-card').length;
+                const doneCount = $('.board-column:nth-child(4) .column-content .ticket-card').length;
                 
-                // Update status cards
+                // Update status cards with total counts (regardless of filter)
                 $('.status-card.todo .status-count').text(todoCount);
                 $('.status-card.in-progress .status-count').text(inProgressCount);
                 $('.status-card.testing .status-count').text(testingCount);
-                $('.status-card.done .status-count').text(closedCount);
+                $('.status-card.done .status-count').text(doneCount);
                 
-                // Update column headers
+                // Update column headers with total counts (regardless of filter)
                 $('.board-column:nth-child(1) .ticket-count').text(todoCount);
                 $('.board-column:nth-child(2) .ticket-count').text(inProgressCount);
                 $('.board-column:nth-child(3) .ticket-count').text(testingCount);
-                $('.board-column:nth-child(4) .ticket-count').text(closedCount);
+                $('.board-column:nth-child(4) .ticket-count').text(doneCount);
             }
+            
+            // Initial counter update on page load
+            updateCounters();
         });
     </script>
 }
