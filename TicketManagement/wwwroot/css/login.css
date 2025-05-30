@@ -241,3 +241,227 @@
     }
 }
 
+/* Forgot Password Page Styles */
+.forgot-password-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 80vh;
+    width: 100%;
+    padding: 20px;
+}
+
+.forgot-password-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.forgot-password-card {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.forgot-password-header {
+    background: linear-gradient(135deg, #4a6cf7 0%, #2a4bc9 100%);
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+}
+
+.forgot-password-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.forgot-password-header p {
+    opacity: 0.9;
+    margin-bottom: 0;
+    font-size: 16px;
+}
+
+.forgot-password-form {
+    padding: 40px 30px 20px;
+}
+
+.reset-button-container {
+    margin-bottom: 25px;
+}
+
+.btn-reset {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4a6cf7 0%, #2a4bc9 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 10px 20px rgba(74, 108, 247, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(74, 108, 247, 0.4);
+}
+
+.back-to-login {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-to-login a {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-to-login a i {
+    margin-right: 5px;
+}
+
+.back-to-login a:hover {
+    color: #4a6cf7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .forgot-password-header {
+        padding: 30px 20px;
+    }
+    
+    .forgot-password-header h1 {
+        font-size: 24px;
+    }
+    
+    .forgot-password-form {
+        padding: 30px 20px 15px;
+    }
+    
+    .btn-reset {
+        padding: 12px;
+    }
+}
+
+/* Resend Email Confirmation Page Styles */
+.resend-confirmation-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 80vh;
+    width: 100%;
+    padding: 20px;
+}
+
+.resend-confirmation-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.resend-confirmation-card {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.resend-confirmation-header {
+    background: linear-gradient(135deg, #4a6cf7 0%, #2a4bc9 100%);
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+}
+
+.resend-confirmation-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.resend-confirmation-header p {
+    opacity: 0.9;
+    margin-bottom: 0;
+    font-size: 16px;
+}
+
+.resend-confirmation-form {
+    padding: 40px 30px 20px;
+}
+
+.resend-button-container {
+    margin-bottom: 25px;
+}
+
+.btn-resend {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4a6cf7 0%, #2a4bc9 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 10px 20px rgba(74, 108, 247, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-resend:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(74, 108, 247, 0.4);
+}
+
+.back-to-login {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-to-login a {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-to-login a i {
+    margin-right: 5px;
+}
+
+.back-to-login a:hover {
+    color: #4a6cf7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .resend-confirmation-header {
+        padding: 30px 20px;
+    }
+    
+    .resend-confirmation-header h1 {
+        font-size: 24px;
+    }
+    
+    .resend-confirmation-form {
+        padding: 30px 20px 15px;
+    }
+    
+    .btn-resend {
+        padding: 12px;
+    }
+}
+
+
+

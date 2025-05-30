@@ -2,12 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using TicketManagement.Areas.Identity.Data;
 using TicketManagement.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using TicketManagement.Services;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("TicketManagementDbContextConnection") ?? throw new InvalidOperationException("Connection string 'TicketManagementDbContextConnection' not found.");
 
 builder.Services.AddDbContext<TicketManagementDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<TicketManagementUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<TicketManagementDbContext>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
