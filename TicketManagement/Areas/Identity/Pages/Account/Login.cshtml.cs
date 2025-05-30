@@ -15,11 +15,13 @@ namespace TicketManagement.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<TicketManagementUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<TicketManagementUser> _userManager;
 
-        public LoginModel(SignInManager<TicketManagementUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<TicketManagementUser> signInManager, ILogger<LoginModel> logger, UserManager<TicketManagementUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -112,6 +114,15 @@ namespace TicketManagement.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    // Get the user and add a FullName claim
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user != null)
+                    {
+                        // Add FullName claim if it doesn't exist
+                        var fullNameClaim = new System.Security.Claims.Claim("FullName", user.FirstName + " " + user.LastName);
+                        await _userManager.AddClaimAsync(user, fullNameClaim);
+                    }
+                    
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

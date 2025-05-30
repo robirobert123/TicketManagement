@@ -1,0 +1,1 @@
+IEnumerable<Comment> GetCommentsByTicketId(int ticketId);
