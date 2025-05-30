@@ -241,6 +241,75 @@
     }
 }
 
+/* Registration page specific styles */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+/* Password strength indicator */
+.password-strength {
+    height: 5px;
+    margin-top: 8px;
+    border-radius: 3px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.password-strength-meter {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.strength-weak {
+    width: 25%;
+    background-color: #dc3545;
+}
+
+.strength-fair {
+    width: 50%;
+    background-color: #ffc107;
+}
+
+.strength-good {
+    width: 75%;
+    background-color: #6c757d;
+}
+
+.strength-strong {
+    width: 100%;
+    background-color: #28a745;
+}
+
+/* Responsive adjustments for registration form */
+@media (max-width: 768px) {
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding-right: 0;
+        padding-left: 0;
+    }
+    
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+    
+    .col-md-6:first-child .form-group {
+        margin-bottom: 15px;
+    }
+}
+
 /* Forgot Password Page Styles */
 .forgot-password-page {
     display: flex;
@@ -462,6 +531,7 @@
         padding: 12px;
     }
 }
+
 
 
 
