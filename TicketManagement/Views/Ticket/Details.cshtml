@@ -128,17 +128,17 @@
             </div>
             
             <div class="button-group">
-                <button class="edit-button" id="editbtn">
+                <button class="btn-save" id="editbtn">
                     <i class="bi bi-pencil-square"></i> Edit Ticket
                 </button>
-                <button class="delete-button" id="deletebtn">
+                <button class="btn-delete" id="deletebtn">
                     <i class="bi bi-trash"></i> Delete Ticket
                 </button>
-                <div class="save-cancel-buttons" style="display: none;">
-                    <button class="cancel-button" id="cancelbtn">
+                <div class="action-buttons" id="editButtons" style="display: none;">
+                    <button class="btn-cancel" id="cancelbtn">
                         <i class="bi bi-x-circle"></i> Cancel
                     </button>
-                    <button class="save-button" id="savebtn">
+                    <button class="btn-save" id="savebtn">
                         <i class="bi bi-check-circle"></i> Save Changes
                     </button>
                 </div>
@@ -286,10 +286,7 @@
             
             // Function to enter edit mode
             function enterEditMode() {
-                // Show loading notification
-                showNotification('Loading edit options...', 'info');
-                
-                // Hide display elements and show edit elements
+                // Hide edit elements and show display elements
                 $('#title-display').hide();
                 $('#title-edit').show();
                 
@@ -310,7 +307,8 @@
                 
                 // Hide edit button and show save/cancel buttons
                 $('#editbtn').hide();
-                $('.save-cancel-buttons').show();
+                $('#deletebtn').hide();
+                $('#editButtons').show();
                 
                 // Load dropdown options
                 loadDropdownOptions();
@@ -338,28 +336,41 @@
                 $('#assignee-display').show();
                 
                 // Hide save/cancel buttons and show edit button
-                $('.save-cancel-buttons').hide();
+                $('#editButtons').hide();
                 $('#editbtn').show();
+                $('#deletebtn').show();
                 
-                // Revert changes if requested
+                // If revertChanges is true, revert all changes
                 if (revertChanges) {
-                    $('#title-edit').val(originalValues.title);
+                    // Revert all changes using the originalValues object
                     $('#title-display').text(originalValues.title);
+                    $('#description-display').html(originalValues.description.replace(/\\r\\n|\\n/g, '<br>'));
                     
-                    $('#description-edit').val(originalValues.description.replace(/\\r\\n/g, '\r\n').replace(/\\n/g, '\n'));
-                    $('#description-display').text(originalValues.description.replace(/\\r\\n/g, '\r\n').replace(/\\n/g, '\n'));
+                    // Update priority display
+                    $('#priority-display').html(`<span class="priority-badge priority-${originalValues.priorityText.toLowerCase()}">
+                        <i class="bi bi-flag-fill"></i> ${originalValues.priorityText}
+                    </span>`);
                     
-                    // Reset dropdowns to original values
-                    $('#priority-select').val(originalValues.priorityId);
-                    $('#category-select').val(originalValues.categoryId);
-                    $('#status-select').val(originalValues.statusId);
-                    $('#assignee-select').val(originalValues.assignee);
+                    // Update category display
+                    $('#category-display').html(`<span class="category-badge">
+                        <i class="bi bi-tag-fill"></i> ${originalValues.categoryText}
+                    </span>`);
                     
-                    // Reset display elements
-                    updatePriorityDisplay(originalValues.priorityId, originalValues.priorityText);
-                    updateCategoryDisplay(originalValues.categoryId, originalValues.categoryText);
-                    updateStatusDisplay(originalValues.statusId, originalValues.statusText);
-                    updateAssigneeDisplay(originalValues.assignee, originalValues.assigneeName);
+                    // Update status display
+                    $('#status-display').html(`<span class="status-badge status-${originalValues.statusText.toLowerCase().replace(' ', '')}">
+                        <i class="bi bi-kanban"></i> ${originalValues.statusText}
+                    </span>`);
+                    
+                    // Update assignee display
+                    $('#assignee-display').text(originalValues.assigneeName);
+                    
+                    // Reset form values
+                    $('#title-edit').val(originalValues.title);
+                    $('#description-edit').val(originalValues.description);
+                    $('#priority-edit').val(originalValues.priorityId);
+                    $('#category-edit').val(originalValues.categoryId);
+                    $('#status-edit').val(originalValues.statusId);
+                    $('#assignee-edit').val(originalValues.assignee);
                 }
             }
             
