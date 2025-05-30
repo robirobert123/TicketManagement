@@ -736,14 +736,18 @@ body {
 }
 
 .register-btn {
-  background-color: white;
-  color: #0f3443;
+  background-color: white !important;
+  color: #0f3443 !important;
   font-weight: 600;
   transition: all 0.3s ease;
+  display: inline-block !important;
+  text-decoration: none;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .register-btn:hover {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
