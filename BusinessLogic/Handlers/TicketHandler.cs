@@ -6,7 +6,6 @@ using DataAcces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace BusinessLogic.Handlers
 {
     public class TicketHandler : ITicketHandler
@@ -113,7 +112,6 @@ namespace BusinessLogic.Handlers
                 return new ResultEntity<IEnumerable<UserEntity>> { Data = null, IsSuccess = false, Message = e.Message };
             }
         }
-
         public ResultEntity<TicketEntity> InsertTicket(Ticket data)
         {
             try
@@ -151,24 +149,123 @@ namespace BusinessLogic.Handlers
 
 
         }
-        public ResultEntity<CommentEntity> InsertTicketComment(Comment data)
+        public ResultEntity<CommentEntity> InsertTicketComment(Comment comment)
         {
             try
             {
-                using (
-                var unitOfWork = new UnitOfWork())
+                using (var unitOfWork = new UnitOfWork())
                 {
-                    unitOfWork.CommentRepository.InsertComment(data);
+                    unitOfWork.CommentRepository.InsertComment(comment);
                     unitOfWork.Save();
 
-                    return new ResultEntity<CommentEntity> { Data = data.ToBusinessEntity(), IsSuccess = true, Message = "Success" };
+                    // Convert to business entity
+                    var commentEntity = comment.ToBusinessEntity();
+
+                    // Get the user's name and set it in the business entity
+                    var user = unitOfWork.UserRepository.GetUserById(comment.UserID);
+                    if (user != null)
+                    {
+                        commentEntity.CommentUser = user.FirstName + " " + user.LastName;
+                    }
+
+                    return new ResultEntity<CommentEntity>
+                    {
+                        Data = commentEntity,
+                        IsSuccess = true,
+                        Message = "Success"
+                    };
                 }
             }
             catch (Exception e)
             {
-                return new ResultEntity<CommentEntity> { Data = null, IsSuccess = false, Message = e.Message };
+                return new ResultEntity<CommentEntity>
+                {
+                    Data = null,
+                    IsSuccess = false,
+                    Message = e.Message
+                };
             }
+        }
+        public ResultEntity<TicketEntity> DeleteTicket(int ticketId)
+        {
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var ticket = unitOfWork.TicketRepository.Get(ticketId);
+                    if (ticket == null)
+                    {
+                        return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = "Ticket not found" };
+                    }
 
+                    // Get all comments and filter by ticket ID
+                    var allComments = unitOfWork.CommentRepository.GetAllComments();
+                    var ticketComments = allComments.Where(c => c.TicketID == ticketId).ToList();
+
+                    // Delete each comment associated with this ticket
+                    if (ticketComments != null && ticketComments.Any())
+                    {
+                        foreach (var comment in ticketComments)
+                        {
+                            if (comment != null)
+                            {
+                                unitOfWork.CommentRepository.Delete(comment.CommentID);
+                            }
+                        }
+                    }
+
+                    // Now delete the ticket
+                    unitOfWork.TicketRepository.Delete(ticketId);
+                    unitOfWork.Save();
+
+                    return new ResultEntity<TicketEntity> { Data = null, IsSuccess = true, Message = "Success" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<TicketEntity> { Data = null, IsSuccess = false, Message = e.Message };
+            }
+        }
+        public ResultEntity<List<CommentEntity>> GetCommentsByTicketId(int ticketId)
+        {
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var comments = unitOfWork.CommentRepository.GetCommentsByTicketId(ticketId);
+                    var commentEntities = new List<CommentEntity>();
+
+                    foreach (var comment in comments)
+                    {
+                        var commentEntity = comment.ToBusinessEntity();
+
+                        // Get user information for each comment
+                        var user = unitOfWork.UserRepository.GetUserById(comment.UserID);
+                        if (user != null)
+                        {
+                            commentEntity.CommentUser = user.FirstName + " " + user.LastName;
+                        }
+
+                        commentEntities.Add(commentEntity);
+                    }
+
+                    return new ResultEntity<List<CommentEntity>>
+                    {
+                        Data = commentEntities,
+                        IsSuccess = true,
+                        Message = "Success"
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResultEntity<List<CommentEntity>>
+                {
+                    Data = null,
+                    IsSuccess = false,
+                    Message = e.Message
+                };
+            }
         }
     }
 }

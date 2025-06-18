@@ -11,5 +11,6 @@ namespace DataAcces.Repositories.Interfaces
         void UpdateComment(Comment comment);
         void DeleteComment(int id);
         void DeleteAll();
+        List<Comment> GetCommentsByTicketId(int ticketId);
     }
 }

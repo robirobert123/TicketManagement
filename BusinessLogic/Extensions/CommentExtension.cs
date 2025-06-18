@@ -18,7 +18,9 @@ namespace BusinessLogic.Extensions
                 CommentID = dataAccess.CommentID,
                 CommentText = dataAccess.CommentText,
                 CommentDate = dataAccess.PostedAt,
-                TicketID = dataAccess.TicketID
+                CommentUserID = dataAccess.UserID,
+                TicketID = dataAccess.TicketID,
+                // We'll set CommentUser separately since it's not in the Comment class
             };
         }
         internal static Comment ToDataAccessEntity(this CommentEntity businessEntity)

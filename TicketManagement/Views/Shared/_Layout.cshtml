@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,23 +10,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg shadow-lg custom-navbar">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TicketManagement</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="brand-icon-container me-2">
+                        <i class="bi bi-ticket-perforated-fill"></i>
+                    </div>
+                    <span>TicketManagement</span>
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
+                        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="bi bi-list text-white"></i>
                 </button>
-                <div class="nav-menu">
-                    <ul>
-                        <li><a asp-controller="Ticket" asp-action="Create" style="background-color: #007bff; color: white; border-radius: 5px; padding: 8px 16px; font-size: 14px; cursor: pointer; text-decoration: none;" class="link">Create</a></li>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item mx-1">
+                            <a class="nav-link rounded-pill px-3 active" aria-current="page" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i> Home
+                            </a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item mx-1">
+                                <a class="nav-link rounded-pill px-3" asp-controller="Ticket" asp-action="Create">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Ticket
+                                </a>
+                            </li>
+                        }
                     </ul>
-                </div>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
+                    <div class="d-flex">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
@@ -37,7 +54,7 @@
             @RenderBody()
         </main>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

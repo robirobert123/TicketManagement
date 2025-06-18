@@ -1,126 +1,689 @@
 ﻿@model TicketManagement.Models.TicketDetailsModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Ticket Details";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <div class="container-details">
-        <div class="container-create">
-            <div class="content">
-                <h1 class="ticket-title">@Model.Title</h1>
-                <div class="ticket-section">
-                    <label for="TicketID">TicketID:</label>
-                    <p id="ticketID">@Model.TicketID</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="description">Description:</label>
-                    <p id="description">@Model.Description</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="priority">Priority:</label>
-                    <p id="priority">@Model.PriorityText</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="category">Category:</label>
-                    <p id="category">@Model.CategoryText</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="status">Status:</label>
-                    <p id="status">@Model.StatusText</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="created-by">Created By:</label>
-                    <p id="created-by">@Model.CreatedUser</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="created-at">Created At:</label>
-                    <p id="created-at">@Model.CreatedDate.ToString("yyyy-MM-dd")</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="assignee">Assignee:</label>
-                    <p id="assignee">@Model.AssigneeName</p>
-                </div>
-                <div class="ticket-section">
-                    <label for="last-update">Last Update:</label>
-                    <p id="last-update">@Model.AuditDate.ToString("yyyy-MM-dd")</p>
-                </div>
-                <div>
-                    <button class="edit-button" id="editbtn" asp-action="Edit" asp-route-id="@Model?.TicketID">Edit</button>
+
+<link rel="stylesheet" href="~/css/ticket-details.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<div id="notification" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1001;"></div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "antiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
+
+<div class="container-details">
+    <div class="container-create">
+        <div class="content">
+            <h1 class="ticket-title" id="title-display">@Model.Title</h1>
+            <input type="text" id="title-edit" class="edit-input title-edit" value="@Model.Title" style="display: none;">
+            
+            <div class="ticket-section">
+                <label for="TicketID"><i class="bi bi-hash"></i> Ticket ID:</label>
+                <p id="ticketID">#@Model.TicketID</p>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="description"><i class="bi bi-card-text"></i> Description:</label>
+                <p id="description-display">@Model.Description</p>
+                <textarea id="description-edit" class="edit-input description-edit" style="display: none;">@Model.Description</textarea>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="priority"><i class="bi bi-flag"></i> Priority:</label>
+                <p id="priority-display">
+                    <span class="priority-badge priority-@Model.PriorityText.ToLower()">
+                        @if (Model.PriorityText.ToLower() == "high")
+                        {
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        }
+                        else if (Model.PriorityText.ToLower() == "medium")
+                        {
+                            <i class="bi bi-dash-circle-fill"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-arrow-down-circle-fill"></i>
+                        }
+                        @Model.PriorityText
+                    </span>
+                </p>
+                <div id="priority-edit" class="edit-select-wrapper" style="display: none;">
+                    <select id="priority-select" class="edit-select">
+                        <!-- Will be populated via AJAX -->
+                    </select>
                 </div>
             </div>
-        </div>
-
-        <div class="chat-container">
-            <h2>Comments</h2>
-            <div class="chat-box">
-                <div class="messages">
-                    @foreach (var comment in Model.Comments)
-                    {
-                        <div class="message received">
-                            <div class="avatar">
-                                <span class="initials"></span>
-                            </div>
-                            <div class="message-content">
-                                <div class="message-text">@comment.CommentText</div>
-                                <div class="message-meta">@comment.CommentDate.ToString("yyyy-MM-dd HH:mm")</div>
-                            </div>
-                        </div>
-                    }
+            
+            <div class="ticket-section">
+                <label for="category"><i class="bi bi-tag"></i> Category:</label>
+                <p id="category-display">
+                    <span class="category-badge">
+                        <i class="bi bi-folder"></i>
+                        @Model.CategoryText
+                    </span>
+                </p>
+                <div id="category-edit" class="edit-select-wrapper" style="display: none;">
+                    <select id="category-select" class="edit-select">
+                        <!-- Will be populated via AJAX -->
+                    </select>
                 </div>
-                <input type="text" class="chat-input" placeholder="Type your message...">
-                <button class="send-button">Send</button>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="status"><i class="bi bi-kanban"></i> Status:</label>
+                <p id="status-display">
+                    <span class="status-badge status-@Model.StatusText.ToLower().Replace(" ", "")">
+                        @if (Model.StatusText.ToLower().Contains("todo"))
+                        {
+                            <i class="bi bi-hourglass"></i>
+                        }
+                        else if (Model.StatusText.ToLower().Contains("progress"))
+                        {
+                            <i class="bi bi-arrow-repeat"></i>
+                        }
+                        else if (Model.StatusText.ToLower().Contains("testing"))
+                        {
+                            <i class="bi bi-check2-circle"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-check2-all"></i>
+                        }
+                        @Model.StatusText
+                    </span>
+                </p>
+                <div id="status-edit" class="edit-select-wrapper" style="display: none;">
+                    <select id="status-select" class="edit-select">
+                        <!-- Will be populated via AJAX -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="created-by"><i class="bi bi-person"></i> Created By:</label>
+                <p id="created-by">@Model.CreatedUser</p>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="created-at"><i class="bi bi-calendar-plus"></i> Created At:</label>
+                <p id="created-at">@Model.CreatedDate.ToString("yyyy-MM-dd")</p>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="assignee"><i class="bi bi-person-check"></i> Assignee:</label>
+                <p id="assignee-display">@(string.IsNullOrEmpty(Model.AssigneeName) ? "Unassigned" : Model.AssigneeName)</p>
+                <div id="assignee-edit" class="edit-select-wrapper" style="display: none;">
+                    <select id="assignee-select" class="edit-select">
+                        <!-- Will be populated via AJAX -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="ticket-section">
+                <label for="last-update"><i class="bi bi-clock-history"></i> Last Update:</label>
+                <p id="last-update">@Model.AuditDate.ToString("yyyy-MM-dd")</p>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-save" id="editbtn">
+                    <i class="bi bi-pencil-square"></i> Edit Ticket
+                </button>
+                <button class="btn-delete" id="deletebtn">
+                    <i class="bi bi-trash"></i> Delete Ticket
+                </button>
+                <div class="action-buttons" id="editButtons" style="display: none;">
+                    <button class="btn-cancel" id="cancelbtn">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button class="btn-save" id="savebtn">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</body>
-<script>
-    $(document).ready(function () {
-        $('#editbtn').click(function () {
-            window.location.href = "/Ticket/Edit/@Model.TicketID";
-        })
 
-        $('.send-button').click(function() {
-            var message = $('.chat-input').val();
-
-            var dataArray = {
-                "ticketId" : @Model.TicketID,
-                "commentText" : message
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "/Ticket/AddComment",
-                data: $.param(dataArray),
-                cache: false,
-                success: function (svr_resp) {
-                    if (svr_resp == '1') { 
-                        
-                    } else {
-                        alert("Error: Data not captured on the server.");
+    <div class="chat-container">
+        <h2><i class="bi bi-chat-dots"></i> Comments</h2>
+        <div class="chat-box">
+            <div class="messages" id="comments-container">
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    foreach (var comment in Model.Comments)
+                    {
+                        <div class="message">
+                            <div class="avatar">
+                                @if (!string.IsNullOrEmpty(comment.CommentUser))
+                                {
+                                    var nameParts = comment.CommentUser.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                    string initials = "?";
+                                    
+                                    if (nameParts.Length >= 2)
+                                    {
+                                        initials = nameParts[0].Substring(0, 1).ToUpper() + nameParts[1].Substring(0, 1).ToUpper();
+                                    }
+                                    else if (nameParts.Length == 1 && nameParts[0].Length > 0)
+                                    {
+                                        initials = nameParts[0].Substring(0, 1).ToUpper();
+                                    }
+                                    
+                                    <span class="initials" data-full-name="@comment.CommentUser">@initials</span>
+                                }
+                                else
+                                {
+                                    <span class="initials">?</span>
+                                }
+                            </div>
+                            <div class="message-content">
+                                <div class="message-text">@comment.CommentText</div>
+                                <div class="message-meta">
+                                    <i class="bi bi-clock"></i> @comment.CommentDate.ToString("yyyy-MM-dd HH:mm")
+                                </div>
+                            </div>
+                        </div>
                     }
                 }
+                else
+                {
+                    <div class="no-comments" id="no-comments-message">
+                        <i class="bi bi-chat-left-text"></i>
+                        <p>No comments yet. Be the first to add a comment!</p>
+                    </div>
+                }
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="comment-input" placeholder="Type your comment here...">
+                <button class="send-button" id="send-comment">
+                    <i class="bi bi-send"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="notification"></div>
+
+<div class="modal-overlay" id="deleteModal" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete ticket #@Model.TicketID?</p>
+            <p class="warning-text">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="cancel-modal-btn" id="cancelDelete">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+            <form action="@Url.Action("DeleteConfirmed", "Ticket", new { id = Model.TicketID })" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="confirm-delete-btn">
+                    <i class="bi bi-trash"></i> Delete Permanently
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Store original values for cancel operation
+            let originalValues = {
+                title: '@Model.Title',
+                description: '@Model.Description.Replace("\r\n", "\\r\\n").Replace("\n", "\\n")',
+                priorityId: @Model.PriorityID,
+                priorityText: '@Model.PriorityText',
+                categoryId: @Model.CategoryID,
+                categoryText: '@Model.CategoryText',
+                statusId: @Model.StatusID,
+                statusText: '@Model.StatusText',
+                assignee: '@Model.Assignee',
+                assigneeName: '@(string.IsNullOrEmpty(Model.AssigneeName) ? "Unassigned" : Model.AssigneeName)'
+            };
+            
+            // Edit button click handler
+            $('#editbtn').click(function () {
+                enterEditMode();
             });
-        });
-        document.querySelector('.initials').forEach(function (span) {
-            const fullName = span.dataset.fullName || '';
-            const names = fullName.trim().split(' ');
-            let initials = '?';
+            
+            // Cancel button click handler
+            $('#cancelbtn').click(function() {
+                exitEditMode(true);
+            });
+            
+            // Save button click handler
+            $('#savebtn').click(function() {
+                saveChanges();
+            });
+            
+            // Delete button click handler
+            $('#deletebtn').click(function() {
+                $('#deleteModal').fadeIn(300);
+            });
 
-            if (name.length >= 2) {
-                initials = (names[0][0] + names[1][0]).toUpperCase();
-            } else if (names.length === 1) {
-                initials = names[0][0].toUpperCase();
+            // Cancel delete button click handler
+            $('#cancelDelete').click(function() {
+                $('#deleteModal').fadeOut(300);
+            });
+            
+            // Send comment button click handler
+            $('#send-comment').click(function() {
+                sendComment();
+            });
+            
+            // Handle Enter key press in comment input
+            $('#comment-input').keypress(function(e) {
+                if (e.which === 13) { // Enter key
+                    sendComment();
+                    return false;
+                }
+            });
+            
+            // Function to enter edit mode
+            function enterEditMode() {
+                // Hide edit elements and show display elements
+                $('#title-display').hide();
+                $('#title-edit').show();
+                
+                $('#description-display').hide();
+                $('#description-edit').show();
+                
+                $('#priority-display').hide();
+                $('#priority-edit').show();
+                
+                $('#category-display').hide();
+                $('#category-edit').show();
+                
+                $('#status-display').hide();
+                $('#status-edit').show();
+                
+                $('#assignee-display').hide();
+                $('#assignee-edit').show();
+                
+                // Hide edit button and show save/cancel buttons
+                $('#editbtn').hide();
+                $('#deletebtn').hide();
+                $('#editButtons').show();
+                
+                // Load dropdown options
+                loadDropdownOptions();
             }
+            
+            // Function to exit edit mode
+            function exitEditMode(revertChanges) {
+                // Hide edit elements and show display elements
+                $('#title-edit').hide();
+                $('#title-display').show();
+                
+                $('#description-edit').hide();
+                $('#description-display').show();
+                
+                $('#priority-edit').hide();
+                $('#priority-display').show();
+                
+                $('#category-edit').hide();
+                $('#category-display').show();
+                
+                $('#status-edit').hide();
+                $('#status-display').show();
+                
+                $('#assignee-edit').hide();
+                $('#assignee-display').show();
+                
+                // Hide save/cancel buttons and show edit button
+                $('#editButtons').hide();
+                $('#editbtn').show();
+                $('#deletebtn').show();
+                
+                // If revertChanges is true, revert all changes
+                if (revertChanges) {
+                    // Revert all changes using the originalValues object
+                    $('#title-display').text(originalValues.title);
+                    $('#description-display').html(originalValues.description.replace(/\\r\\n|\\n/g, '<br>'));
+                    
+                    // Update priority display
+                    $('#priority-display').html(`<span class="priority-badge priority-${originalValues.priorityText.toLowerCase()}">
+                        <i class="bi bi-flag-fill"></i> ${originalValues.priorityText}
+                    </span>`);
+                    
+                    // Update category display
+                    $('#category-display').html(`<span class="category-badge">
+                        <i class="bi bi-tag-fill"></i> ${originalValues.categoryText}
+                    </span>`);
+                    
+                    // Update status display
+                    $('#status-display').html(`<span class="status-badge status-${originalValues.statusText.toLowerCase().replace(' ', '')}">
+                        <i class="bi bi-kanban"></i> ${originalValues.statusText}
+                    </span>`);
+                    
+                    // Update assignee display
+                    $('#assignee-display').text(originalValues.assigneeName);
+                    
+                    // Reset form values
+                    $('#title-edit').val(originalValues.title);
+                    $('#description-edit').val(originalValues.description);
+                    $('#priority-edit').val(originalValues.priorityId);
+                    $('#category-edit').val(originalValues.categoryId);
+                    $('#status-edit').val(originalValues.statusId);
+                    $('#assignee-edit').val(originalValues.assignee);
+                }
+            }
+            
+            // Function to load dropdown options via AJAX
+            function loadDropdownOptions() {
+                $.ajax({
+                    url: '/Ticket/GetDropdownOptions',
+                    type: 'GET',
+                    data: { ticketId: @Model.TicketID },
+                    success: function(response) {
+                        // Populate priority dropdown
+                        populateDropdown('#priority-select', response.priorities, originalValues.priorityId);
+                        
+                        // Populate category dropdown
+                        populateDropdown('#category-select', response.categories, originalValues.categoryId);
+                        
+                        // Populate status dropdown
+                        populateDropdown('#status-select', response.statuses, originalValues.statusId);
+                        
+                        // Populate assignee dropdown
+                        populateDropdown('#assignee-select', response.assignees, originalValues.assignee);
+                    },
+                    error: function() {
+                        showNotification('Error loading dropdown options', 'error');
+                        exitEditMode(true);
+                    }
+                });
+            }
+            
+            // Helper function to populate a dropdown
+            function populateDropdown(selector, options, selectedValue) {
+                const dropdown = $(selector);
+                dropdown.empty();
+                
+                $.each(options, function(index, option) {
+                    dropdown.append($('<option></option>')
+                        .attr('value', option.value)
+                        .text(option.text));
+                });
+                
+                dropdown.val(selectedValue);
+                
+                // Add change event handlers
+                if (selector === '#priority-select') {
+                    dropdown.on('change', function() {
+                        const selectedOption = $(this).find('option:selected');
+                        updatePriorityDisplay(selectedOption.val(), selectedOption.text());
+                    });
+                } else if (selector === '#category-select') {
+                    dropdown.on('change', function() {
+                        const selectedOption = $(this).find('option:selected');
+                        updateCategoryDisplay(selectedOption.val(), selectedOption.text());
+                    });
+                } else if (selector === '#status-select') {
+                    dropdown.on('change', function() {
+                        const selectedOption = $(this).find('option:selected');
+                        updateStatusDisplay(selectedOption.val(), selectedOption.text());
+                    });
+                } else if (selector === '#assignee-select') {
+                    dropdown.on('change', function() {
+                        const selectedOption = $(this).find('option:selected');
+                        updateAssigneeDisplay(selectedOption.val(), selectedOption.text());
+                    });
+                }
+            }
+            
+            // Update display functions
+            function updatePriorityDisplay(id, text) {
+                const priorityText = text.toLowerCase();
+                let icon = '';
+                
+                if (priorityText === 'high') {
+                    icon = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                } else if (priorityText === 'medium') {
+                    icon = '<i class="bi bi-dash-circle-fill"></i>';
+                } else {
+                    icon = '<i class="bi bi-arrow-down-circle-fill"></i>';
+                }
+                
+                $('#priority-display').html(`
+                    <span class="priority-badge priority-${priorityText}">
+                        ${icon}
+                        ${text}
+                    </span>
+                `);
+            }
+            
+            function updateCategoryDisplay(id, text) {
+                $('#category-display').html(`
+                    <span class="category-badge">
+                        <i class="bi bi-folder"></i>
+                        ${text}
+                    </span>
+                `);
+            }
+            
+            function updateStatusDisplay(id, text) {
+                const statusText = text.toLowerCase().replace(' ', '');
+                let icon = '';
+                
+                if (statusText.includes('todo')) {
+                    icon = '<i class="bi bi-hourglass"></i>';
+                } else if (statusText.includes('progress')) {
+                    icon = '<i class="bi bi-arrow-repeat"></i>';
+                } else if (statusText.includes('testing')) {
+                    icon = '<i class="bi bi-check2-circle"></i>';
+                } else {
+                    icon = '<i class="bi bi-check2-all"></i>';
+                }
+                
+                $('#status-display').html(`
+                    <span class="status-badge status-${statusText}">
+                        ${icon}
+                        ${text}
+                    </span>
+                `);
+            }
+            
+            function updateAssigneeDisplay(id, name) {
+                $('#assignee-display').text(name || 'Unassigned');
+            }
+            
+            // Function to save changes
+            function saveChanges() {
+                // Get values from edit fields
+                const ticketData = {
+                    TicketID: @Model.TicketID,
+                    Title: $('#title-edit').val(),
+                    Description: $('#description-edit').val(),
+                    PriorityID: $('#priority-select').val(),
+                    CategoryID: $('#category-select').val(),
+                    StatusID: $('#status-select').val(),
+                    Assignee: $('#assignee-select').val(),
+                    CreatedDate: '@Model.CreatedDate.ToString("yyyy-MM-ddTHH:mm:ss")',
+                    CreatedUser: '@Model.CreatedUser'
+                };
+                
+                // Disable save/cancel buttons while saving
+                $('#savebtn, #cancelbtn').prop('disabled', true);
+                $('#savebtn').html('<i class="bi bi-hourglass-split"></i> Saving...');
+                
+                // Send AJAX request to save changes
+                $.ajax({
+                    url: '/Ticket/UpdateInline',
+                    type: 'POST',
+                    data: ticketData,
+                    success: function(response) {
+                        if (response.success) {
+                            // Update original values
+                            originalValues.title = ticketData.Title;
+                            originalValues.description = ticketData.Description;
+                            originalValues.priorityId = ticketData.PriorityID;
+                            originalValues.priorityText = $('#priority-select option:selected').text();
+                            originalValues.categoryId = ticketData.CategoryID;
+                            originalValues.categoryText = $('#category-select option:selected').text();
+                            originalValues.statusId = ticketData.StatusID;
+                            originalValues.statusText = $('#status-select option:selected').text();
+                            originalValues.assignee = ticketData.Assignee;
+                            originalValues.assigneeName = $('#assignee-select option:selected').text();
+                            
+                            // Update display elements
+                            $('#title-display').text(ticketData.Title);
+                            $('#description-display').text(ticketData.Description);
+                            $('#last-update').text(response.auditDate);
+                            
+                            // Exit edit mode
+                            exitEditMode(false);
+                            
+                            // Show success notification
+                            showNotification('Ticket updated successfully', 'success');
+                        } else {
+                            showNotification('Error: ' + response.message, 'error');
+                            // Re-enable buttons
+                            $('#savebtn, #cancelbtn').prop('disabled', false);
+                            $('#savebtn').html('<i class="bi bi-check-circle"></i> Save Changes');
+                        }
+                    },
+                    error: function() {
+                        showNotification('Error: Could not connect to the server', 'error');
+                        // Re-enable buttons
+                        $('#savebtn, #cancelbtn').prop('disabled', false);
+                        $('#savebtn').html('<i class="bi bi-check-circle"></i> Save Changes');
+                    }
+                });
+            }
+            
+            function sendComment() {
+                var message = $('#comment-input').val().trim();
+                
+                if (!message) {
+                    return; // Don't send empty messages
+                }
+                
+                // Disable input and button while sending
+                $('#comment-input').prop('disabled', true);
+                $('#send-comment').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Sending...');
+                
+                var dataArray = {
+                    "ticketId": @Model.TicketID,
+                    "commentText": message
+                };
 
-            span.innerText = initials;
+                $.ajax({
+                    type: "POST",
+                    url: "/Ticket/AddComment",
+                    data: $.param(dataArray),
+                    cache: false,
+                    success: function (response) {
+                        // Re-enable input and button
+                        $('#comment-input').prop('disabled', false);
+                        $('#send-comment').prop('disabled', false).html('<i class="bi bi-send"></i> Send');
+                        
+                        if (response == '1') {
+                            // Create new comment element
+                            var currentDate = new Date();
+                            var formattedDate = currentDate.getFullYear() + '-' + 
+                                               padZero(currentDate.getMonth() + 1) + '-' + 
+                                               padZero(currentDate.getDate()) + ' ' + 
+                                               padZero(currentDate.getHours()) + ':' + 
+                                               padZero(currentDate.getMinutes());
+                            
+                            var fullName = '@(User.FindFirst("FullName")?.Value ?? User.Identity.Name)';
+                            var nameParts = fullName.split(' ');
+                            var initials = '?';
+                            
+                            if (nameParts.length >= 2) {
+                                initials = nameParts[0].charAt(0).toUpperCase() + nameParts[1].charAt(0).toUpperCase();
+                            } else if (nameParts.length === 1) {
+                                initials = nameParts[0].charAt(0).toUpperCase();
+                            }
+                            
+                            var newComment = `
+                                <div class="message">
+                                    <div class="avatar">
+                                        <span class="initials" data-full-name="${fullName}">${initials}</span>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-text">${message}</div>
+                                        <div class="message-meta">
+                                            <i class="bi bi-clock"></i> ${formattedDate}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Remove no comments message if it exists
+                            $('#no-comments-message').remove();
+                            
+                            // Add new comment to messages
+                            $('#comments-container').append(newComment);
+                            
+                            // Clear input field
+                            $('#comment-input').val('');
+                            
+                            // Scroll to bottom of messages
+                            $('#comments-container').scrollTop($('#comments-container')[0].scrollHeight);
+                            
+                            // Show success notification
+                            showNotification('Comment added successfully', 'success');
+                        } else {
+                            showNotification('Error: Comment could not be added', 'error');
+                        }
+                    },
+                    error: function() {
+                        // Re-enable input and button
+                        $('#comment-input').prop('disabled', false);
+                        $('#send-comment').prop('disabled', false).html('<i class="bi bi-send"></i> Send');
+                        
+                        showNotification('Error: Could not connect to the server', 'error');
+                    }
+                });
+            }
+            
+            // Helper function to pad numbers with leading zero
+            function padZero(num) {
+                return num < 10 ? '0' + num : num;
+            }
+            
+            // Fix for initials display
+            $('.initials').each(function() {
+                const fullName = $(this).data('full-name') || '';
+                if (fullName) {
+                    const names = fullName.trim().split(' ');
+                    let initials = '?';
+                    
+                    if (names.length >= 2) {
+                        initials = (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+                    } else if (names.length === 1) {
+                        initials = names[0].charAt(0).toUpperCase();
+                    }
+                    
+                    $(this).text(initials);
+                }
+            });
+            
+            // Notification function
+            function showNotification(message, type) {
+                // Create notification element if it doesn't exist
+                if ($('#notification').length === 0) {
+                    $('body').append('<div id="notification"></div>');
+                }
+                
+                // Set notification content and class
+                $('#notification')
+                    .attr('class', type)
+                    .html(message)
+                    .fadeIn(300)
+                    .delay(3000)
+                    .fadeOut(500);
+            }
+            
+            // Scroll to bottom of messages on load
+            $('#comments-container').scrollTop($('#comments-container')[0].scrollHeight);
         });
-    });
-    
-</script>
-</html>
+    </script>
+}

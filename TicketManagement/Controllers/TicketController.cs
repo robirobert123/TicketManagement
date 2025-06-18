@@ -52,29 +52,45 @@ namespace TicketManagement.Controllers
                 var ticketEntity = ticketHandler.GetTicketById(id.Value);
                 var ticketHelper = new TicketHelper();
 
-
                 if (!ticketEntity.IsSuccess)
                 {
                     ModelState.AddModelError("Error", ticketEntity.Message);
                     _logger.LogError(ticketEntity.Message);
+                    return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
-                    if (ticketModel == null)
-                    {
-                        return NotFound();
-                    }
 
-                    return View(ticketModel);
+                var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
+
+                // Ensure comments have user information
+                if (ticketModel.Comments != null)
+                {
+                    foreach (var comment in ticketModel.Comments)
+                    {
+                        if (string.IsNullOrEmpty(comment.CommentUser))
+                        {
+                            // Get user info if missing
+                            var userInfo = _userManager.FindByIdAsync(comment.CommentUserID).Result;
+                            if (userInfo != null)
+                            {
+                                comment.CommentUser = userInfo.FirstName + " " + userInfo.LastName;
+                            }
+                        }
+                    }
                 }
+
+                if (ticketModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticketModel);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error while getting details for ticket ID");
+                _logger.LogError(e, "Error while getting ticket details");
                 ModelState.AddModelError("Error", e.Message);
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Ticket/Create
@@ -214,29 +230,60 @@ namespace TicketManagement.Controllers
                 return NotFound();
             }
 
-            var ticketModel = await _context.TicketModel
-                .FirstOrDefaultAsync(m => m.TicketID == id);
-            if (ticketModel == null)
+            var ticketHandler = new TicketHandler();
+            try
             {
-                return NotFound();
-            }
+                var ticketEntity = ticketHandler.GetTicketById(id.Value);
+                var ticketHelper = new TicketHelper();
 
-            return View(ticketModel);
+                if (!ticketEntity.IsSuccess)
+                {
+                    ModelState.AddModelError("Error", ticketEntity.Message);
+                    _logger.LogError(ticketEntity.Message);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var ticketModel = ticketHelper.GetDetailModel(ticketEntity.Data);
+                if (ticketModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(ticketModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while getting ticket for deletion");
+                ModelState.AddModelError("Error", e.Message);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Ticket/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var ticketModel = await _context.TicketModel.FindAsync(id);
-            if (ticketModel != null)
+            var ticketHandler = new TicketHandler();
+            try
             {
-                _context.TicketModel.Remove(ticketModel);
-            }
+                var result = ticketHandler.DeleteTicket(id);
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError(result.Message);
+                    TempData["ErrorMessage"] = result.Message;
+                    return RedirectToAction(nameof(Details), new { id });
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Ticket deleted successfully";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while deleting ticket ID {0}", id);
+                TempData["ErrorMessage"] = e.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
         }
 
         private bool TicketModelExists(int id)
@@ -244,7 +291,8 @@ namespace TicketManagement.Controllers
             return _context.TicketModel.Any(e => e.TicketID == id);
         }
 
-        public bool AddComment(int ticketId, string commentText)
+        [HttpPost]
+        public IActionResult AddComment(int ticketId, string commentText)
         {
             var handler = new TicketHandler();
             try
@@ -253,33 +301,185 @@ namespace TicketManagement.Controllers
                 if (!ticket.IsSuccess)
                 {
                     _logger.LogError(ticket.Message);
+                    return Json(0);
                 }
-                else
+
+                var user = _userManager.GetUserAsync(User).Result;
+
+                // Ensure we have the user's ID
+                if (user == null)
                 {
-                    var user = _userManager.GetUserAsync(User).Result;
-                    var comment = new Comment
-                    {
-                        CommentText = commentText,
-                        TicketID = ticketId,
-                        UserID = user.Id,
-                        PostedAt = DateTime.Now
-                    };
-                    var insertedComment = handler.InsertTicketComment(comment);
-                    if (!insertedComment.IsSuccess)
-                    {
-                        _logger.LogError(insertedComment.Message);
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    _logger.LogError("User not found");
+                    return Json(0);
                 }
-                return false;
+
+                var comment = new Comment
+                {
+                    CommentText = commentText,
+                    TicketID = ticketId,
+                    UserID = user.Id,
+                    PostedAt = DateTime.Now
+                };
+
+                var insertedComment = handler.InsertTicketComment(comment);
+                if (!insertedComment.IsSuccess)
+                {
+                    _logger.LogError(insertedComment.Message);
+                    return Json(0);
+                }
+
+                return Json(1);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error while adding comment to ticket ID");
-                return false;
+                return Json(0);
+            }
+        }
+
+        // POST: Ticket/UpdateStatus
+        [HttpPost]
+        public IActionResult UpdateStatus(int ticketId, int statusId)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var ticketEntity = ticketHandler.GetTicketById(ticketId);
+
+                if (!ticketEntity.IsSuccess || ticketEntity.Data == null)
+                {
+                    return Json(new { success = false, message = "Ticket not found" });
+                }
+
+                var user = _userManager.GetUserAsync(User).Result;
+                var name = user.FirstName + " " + user.LastName;
+
+                var ticket = ticketEntity.Data;
+                ticket.StatusEntity.StatusID = statusId;
+
+                var helper = new TicketHelper();
+                var data = helper.ToDataEntity(new TicketEditModel
+                {
+                    TicketID = ticket.TicketID,
+                    Title = ticket.Title,
+                    Description = ticket.Description,
+                    PriorityID = ticket.PriorityEntity.PriorityID,
+                    CategoryID = ticket.CategoryEntity.CategoryID,
+                    StatusID = statusId,
+                    Assignee = ticket.AssigneeEntity?.Id,
+                    CreatedDate = ticket.created_Date,
+                    CreatedUser = ticket.created_User
+                }, name);
+
+                var result = ticketHandler.UpdateTicket(data);
+
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError(result.Message);
+                    return Json(new { success = false, message = result.Message });
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating ticket status");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Add this new endpoint to get dropdown options
+        [HttpGet]
+        public IActionResult GetDropdownOptions(int ticketId)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var ticketHelper = new TicketHelper();
+
+                // Get all dropdown options
+                var ticketStatusesResult = ticketHandler.GetTicketStatuses();
+                var ticketCategoriesResult = ticketHandler.GetTicketCategories();
+                var ticketPrioritiesResult = ticketHandler.GetTicketPriorities();
+                var ticketUsersResult = ticketHandler.GetTicketUsers();
+
+                // Format for select lists
+                var statuses = ticketStatusesResult.Data.Select(s => new { value = s.StatusID.ToString(), text = s.StatusName }).ToList();
+                var categories = ticketCategoriesResult.Data.Select(c => new { value = c.CategoryID.ToString(), text = c.CategoryName }).ToList();
+                var priorities = ticketPrioritiesResult.Data.Select(p => new { value = p.PriorityID.ToString(), text = p.PriorityName }).ToList();
+                var assignees = ticketUsersResult.Data.Select(u => new { value = u.Id, text = u.FirstName + " " + u.LastName }).ToList();
+
+                // Add "Unassigned" option to assignees
+                assignees.Insert(0, new { value = "", text = "Unassigned" });
+
+                return Json(new
+                {
+                    statuses = statuses,
+                    categories = categories,
+                    priorities = priorities,
+                    assignees = assignees
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting dropdown options");
+                return Json(new { error = "Failed to load dropdown options" });
+            }
+        }
+
+        // Add this new endpoint to handle inline updates
+        [HttpPost]
+        public IActionResult UpdateInline(int TicketID, string Title, string Description,
+            int PriorityID, int CategoryID, int StatusID, string Assignee,
+            DateTime CreatedDate, string CreatedUser)
+        {
+            try
+            {
+                var ticketHandler = new TicketHandler();
+                var user = _userManager.GetUserAsync(User).Result;
+                var name = user.FirstName + " " + user.LastName;
+
+                // Create ticket data entity
+                var ticket = new Ticket
+                {
+                    TicketID = TicketID,
+                    Title = Title,
+                    Description = Description,
+                    PriorityID = PriorityID,
+                    CategoryID = CategoryID,
+                    StatusID = StatusID,
+                    Assignee = Assignee,
+                    created_Date = CreatedDate,
+                    created_User = CreatedUser,
+                    audit_Date = DateTime.Now,
+                    audit_User = name,
+                    Deleted = false
+                };
+
+                // Update ticket
+                var result = ticketHandler.UpdateTicket(ticket);
+
+                if (result.IsSuccess)
+                {
+                    // Get updated ticket to return updated values
+                    var updatedTicket = ticketHandler.GetTicketById(TicketID);
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Ticket updated successfully",
+                        auditDate = updatedTicket.Data.audit_Date.ToString("yyyy-MM-dd")
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, message = result.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating ticket inline");
+                return Json(new { success = false, message = "An error occurred while updating the ticket" });
             }
         }
     }
