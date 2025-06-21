@@ -1,4 +1,8 @@
 ﻿@model TicketManagement.Models.DashboardModel
+@using Microsoft.AspNetCore.Identity
+@using TicketManagement.Areas.Identity.Data
+@inject SignInManager<TicketManagementUser> SignInManager
+@inject UserManager<TicketManagementUser> UserManager
 
 @{
     ViewBag.Title = "Ticket Dashboard";
@@ -239,6 +243,8 @@
         <i class="bi bi-plus"></i>
     </a>
 </div>
+
+
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>

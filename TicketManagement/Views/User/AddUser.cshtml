@@ -1,0 +1,80 @@
+@model DataAcces.AspNetUser
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<link rel="stylesheet" href="~/css/user-management.css" />
+
+<div class="dashboard-wrapper">
+    <div class="create-ticket-container">
+        <div class="create-header">
+            <h2><i class="bi bi-person-plus"></i> Add New User</h2>
+            <p>Create a new user account</p>
+        </div>
+
+        @if (ViewBag.Failed != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>@ViewBag.Failed
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="create-form-container">
+            <form asp-action="AddUser" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-row two-columns">
+                    <div class="form-group">
+                        <label asp-for="FirstName">
+                            <i class="bi bi-person"></i> First Name
+                        </label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LastName">
+                            <i class="bi bi-person"></i> Last Name
+                        </label>
+                        <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Email">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="UserName">
+                            <i class="bi bi-at"></i> Username
+                        </label>
+                        <input asp-for="UserName" class="form-control" placeholder="Enter username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="Index" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-create">
+                        <i class="bi bi-check-lg"></i> Create User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,181 @@
+@model DataAcces.Ticket
+@{
+    ViewData["Title"] = "Ticket Details";
+}
+
+<link rel="stylesheet" href="~/css/user-dashboard.css" />
+
+<div class="user-dashboard-wrapper">
+    <div class="ticket-detail-container">
+        <div class="ticket-detail-header">
+            <div class="ticket-detail-title">
+                <h1>@Model.Title</h1>
+                <p class="text-muted">Ticket #@Model.TicketID</p>
+            </div>
+            <div class="ticket-status status-@Model.Status?.Name?.ToLower().Replace(" ", "-")">
+                @Model.Status?.Name
+            </div>
+        </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="ticket-detail-meta">
+            <div class="meta-card">
+                <h6><i class="bi bi-folder"></i> Category</h6>
+                <p>@(Model.Category?.Name ?? "Not specified")</p>
+            </div>
+            
+            <div class="meta-card">
+                <h6><i class="bi bi-exclamation-triangle"></i> Priority</h6>
+                <p class="priority-@Model.Priority?.Name?.ToLower()">@(Model.Priority?.Name ?? "Not specified")</p>
+            </div>
+            
+            <div class="meta-card">
+                <h6><i class="bi bi-calendar"></i> Created Date</h6>
+                <p>@Model.created_Date.ToString("MMM dd, yyyy 'at' hh:mm tt")</p>
+            </div>
+            
+            <div class="meta-card">
+                <h6><i class="bi bi-person"></i> Created By</h6>
+                <p>@Model.created_User</p>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.Assignee))
+            {
+                <div class="meta-card">
+                    <h6><i class="bi bi-person-check"></i> Assigned To</h6>
+                    <p>@Model.AspNetUser?.Email</p>
+                </div>
+            }
+            
+            <div class="meta-card">
+                <h6><i class="bi bi-clock"></i> Last Updated</h6>
+                <p>@Model.audit_Date.ToString("MMM dd, yyyy 'at' hh:mm tt")</p>
+            </div>
+        </div>
+
+        <div class="ticket-description-section">
+            <h3><i class="bi bi-file-text"></i> Description</h3>
+            <div class="ticket-description-content">
+                @Html.Raw(Model.Description?.Replace("\n", "<br/>"))
+            </div>
+        </div>
+
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <div class="ticket-comments-section">
+                <h3><i class="bi bi-chat-dots"></i> Comments</h3>
+                <div class="comments-list">
+                    @foreach (var comment in Model.Comments.OrderBy(c => c.PostedAt))
+                    {
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <strong>@comment.AspNetUser?.Email</strong>
+                                <span class="comment-date">@comment.PostedAt.ToString("MMM dd, yyyy 'at' hh:mm tt")</span>
+                            </div>
+                            <div class="comment-content">
+                                @Html.Raw(comment.CommentText?.Replace("\n", "<br/>"))
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="ticket-actions">
+            <a asp-action="Index" class="back-button">
+                <i class="bi bi-arrow-left"></i> Back to My Tickets
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ticket-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.ticket-image:hover {
+    transform: scale(1.05);
+}
+
+.ticket-comments-section {
+    margin-top: 2rem;
+}
+
+.comments-list {
+    margin-top: 1rem;
+}
+
+.comment-item {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.comment-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.comment-content {
+    color: #374151;
+    line-height: 1.6;
+}
+
+.ticket-actions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.priority-low { color: #059669; }
+.priority-medium { color: #d97706; }
+.priority-high { color: #dc2626; }
+.priority-urgent { color: #7c2d12; font-weight: bold; }
+
+.ticket-images-section {
+    margin-top: 2rem;
+}
+
+.ticket-images-section h3 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+    font-weight: 600;
+}
+</style>

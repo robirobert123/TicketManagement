@@ -1,0 +1,116 @@
+@model DataAcces.Ticket
+@{
+    ViewData["Title"] = "Create Ticket";
+}
+
+<link rel="stylesheet" href="~/css/user-dashboard.css" />
+<link rel="stylesheet" href="~/css/create-ticket.css" />
+
+<div class="user-dashboard-wrapper">
+    <div class="create-ticket-container">
+        <div class="create-header">
+            <h2><i class="bi bi-plus-circle"></i> Create New Ticket</h2>
+            <p>Submit a new support request or report an issue</p>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="create-form-container">
+            <form asp-action="CreateTicket" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label asp-for="Title">
+                            <i class="bi bi-card-text"></i> Title
+                        </label>
+                        <input asp-for="Title" class="form-control" placeholder="Brief description of the issue" />
+                        <div class="form-help">Keep it concise but descriptive (e.g., "Login button not working on mobile")</div>
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description">
+                            <i class="bi bi-file-text"></i> Description
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="5"
+                                  placeholder="Provide detailed information about the issue, steps to reproduce, expected behavior, etc."></textarea>
+                        <div class="form-help">Include as much detail as possible to help us resolve your issue quickly.</div>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Classification Section -->
+                <div class="form-section">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label asp-for="CategoryID">
+                                <i class="bi bi-folder"></i> Category
+                            </label>
+                            <select asp-for="CategoryID" class="form-control">
+                                <option value="0">Select Category</option>
+                                @if (ViewBag.Categories != null)
+                                {
+                                    @foreach (var category in ViewBag.Categories)
+                                    {
+                                        <option value="@category.CategoryID">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-help">Choose the category that best describes your issue</div>
+                            <span asp-validation-for="CategoryID" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label asp-for="PriorityID">
+                                <i class="bi bi-exclamation-triangle"></i> Priority
+                            </label>
+                            <select asp-for="PriorityID" class="form-control">
+                                <option value="0">Select Priority</option>
+                                @if (ViewBag.Priorities != null)
+                                {
+                                    @foreach (var priority in ViewBag.Priorities)
+                                    {
+                                        <option value="@priority.PriorityID">@priority.Name</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-help">How urgent is this issue? High priority for critical problems</div>
+                            <span asp-validation-for="PriorityID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="Index" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-create">
+                        <i class="bi bi-check-lg"></i> Create Ticket
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

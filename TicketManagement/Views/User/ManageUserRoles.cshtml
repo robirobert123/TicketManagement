@@ -1,0 +1,98 @@
+@model TicketManagement.Models.UserRoleViewModel
+@{
+    ViewData["Title"] = "Manage User Roles";
+}
+
+<link rel="stylesheet" href="~/css/user-management.css" />
+
+<div class="dashboard-wrapper">
+    <div class="create-ticket-container">
+        <div class="create-header">
+            <h2><i class="bi bi-person-gear"></i> Manage User Roles</h2>
+            <p>Assign roles to @Model.Email</p>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show alert-custom" role="alert">
+                <i class="bi bi-check-circle-fill"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>Please correct the errors below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="create-form-container">
+            <form asp-action="AssignRoles" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" />
+                
+                <div class="form-row">
+                    <div class="form-group role-selector">
+                        <label asp-for="SelectedRoles">
+                            <i class="bi bi-shield-check"></i> Available Roles
+                        </label>
+                        <select asp-for="SelectedRoles" asp-items="Model.AllRoles" multiple="multiple" 
+                                class="form-control">
+                        </select>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle"></i> Hold Ctrl (Cmd on Mac) to select multiple roles
+                        </small>
+                        <span asp-validation-for="SelectedRoles" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="ManageRoles" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-create">
+                        <i class="bi bi-check-lg"></i> Save Roles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Add some interactive feedback for the multi-select
+            $('select[multiple]').on('change', function() {
+                const selectedCount = $(this).val() ? $(this).val().length : 0;
+                const helpText = $(this).siblings('.form-text');
+                
+                if (selectedCount > 0) {
+                    helpText.html('<i class="bi bi-check-circle text-success"></i> ' + selectedCount + ' role(s) selected');
+                } else {
+                    helpText.html('<i class="bi bi-info-circle"></i> Hold Ctrl (Cmd on Mac) to select multiple roles');
+                }
+            });
+
+            // Form validation
+            $('form').on('submit', function(e) {
+                const selectedRoles = $('select[multiple]').val();
+                if (!selectedRoles || selectedRoles.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one role for the user.');
+                    return false;
+                }
+            });
+        });
+    </script>
+}

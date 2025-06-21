@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Handlers;
 using DataAcces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using TicketManagement.Models;
 
 namespace TicketManagement.Controllers
 {
+    [Authorize(Roles = "Admin,Developer")]
     public class TicketController : Controller
     {
         private readonly UserManager<TicketManagementUser> _userManager;

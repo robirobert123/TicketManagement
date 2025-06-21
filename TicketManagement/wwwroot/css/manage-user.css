@@ -1,0 +1,51 @@
+/* Align dropdown and button horizontally, match ticket form style */
+.user-roles-table .form-row.two-columns {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.user-roles-table .form-group {
+    margin-bottom: 0;
+}
+
+.user-roles-table .form-select {
+    border-radius: 10px;
+    border: 1.5px solid #e0e0e0;
+    padding: 0.9rem 1.2rem;
+    background: #f5f8ff;
+    font-size: 1rem;
+    min-width: 140px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.user-roles-table .form-select:focus {
+    border-color: #4a6cf7;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.08);
+}
+
+.user-roles-table .btn-create {
+    background: linear-gradient(90deg, #4a6cf7 0%, #3a5bd9 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 2.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(74, 108, 247, 0.13);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.user-roles-table .btn-create:hover {
+    background: linear-gradient(90deg, #3a5bd9 0%, #4a6cf7 100%);
+    box-shadow: 0 8px 25px rgba(74, 108, 247, 0.18);
+    transform: translateY(-2px);
+}

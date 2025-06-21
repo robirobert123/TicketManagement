@@ -1,0 +1,141 @@
+@model IEnumerable<DataAcces.Ticket>
+@{
+    ViewData["Title"] = "My Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/user-dashboard.css" />
+
+<div class="user-dashboard-wrapper">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+        <div class="welcome-content">
+            <h1><i class="bi bi-person-circle me-2"></i>Welcome, @ViewBag.UserName!</h1>
+            <p class="welcome-subtitle">@ViewBag.UserEmail</p>
+        </div>
+        <div class="quick-actions">
+            <a asp-action="CreateTicket" class="btn-quick-action">
+                <i class="bi bi-plus-circle"></i>
+                <span>Create Ticket</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card stat-primary">
+            <div class="stat-icon">
+                <i class="bi bi-ticket-perforated"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@ViewBag.MyTickets</h3>
+                <p>My Tickets</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@ViewBag.OpenTickets</h3>
+                <p>Open Tickets</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-success">
+            <div class="stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@ViewBag.CompletedTickets</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-danger">
+            <div class="stat-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>@ViewBag.HighPriorityTickets</h3>
+                <p>High Priority</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- My Tickets Section -->
+    <div class="tickets-section">
+        <div class="tickets-grid">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var ticket in Model)
+                {
+                    <div class="ticket-card" data-status="@ticket.Status?.Name?.ToLower()">
+                        <div class="ticket-header">
+                            <div class="ticket-id">#@ticket.TicketID</div>
+                            <div class="ticket-priority priority-@ticket.Priority?.Name?.ToLower()">
+                                @ticket.Priority?.Name
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-content">
+                            <h4 class="ticket-title">@ticket.Title</h4>
+                            <p class="ticket-description">@ticket.Description</p>
+                            
+                            <div class="ticket-meta">
+                                <div class="meta-item">
+                                    <i class="bi bi-folder"></i>
+                                    <span>@ticket.Category?.Name</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-calendar"></i>
+                                    <span>@ticket.created_Date.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <div class="ticket-status status-@ticket.Status?.Name?.ToLower().Replace(" ", "-")">
+                                @ticket.Status?.Name
+                            </div>
+                            <div class="ticket-actions">
+                                <a asp-action="ViewTicket" asp-route-id="@ticket.TicketID" class="btn-view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h3>No tickets found</h3>
+                    <p>You don't have any tickets yet. Create your first ticket to get started!</p>
+                    <a asp-action="CreateTicket" class="btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Create Your First Ticket
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+}

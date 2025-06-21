@@ -28,15 +28,36 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item mx-1">
-                            <a class="nav-link rounded-pill px-3 active" aria-current="page" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door me-1"></i> Home
-                            </a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.IsInRole("Admin") || User.IsInRole("Developer"))
                         {
                             <li class="nav-item mx-1">
+                                <a class="nav-link rounded-pill px-3 active" aria-current="page" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-house-door me-1"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item mx-1">
                                 <a class="nav-link rounded-pill px-3" asp-controller="Ticket" asp-action="Create">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Ticket
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item mx-1">
+                                <a class="nav-link rounded-pill px-3" asp-controller="User" asp-action="ManageRoles">
+                                    <i class="bi bi-shield-lock me-1"></i> Admin Panel
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("User"))
+                        {
+                            <li class="nav-item mx-1">
+                                <a class="nav-link rounded-pill px-3 active" aria-current="page" asp-controller="UserDashboard" asp-action="Index">
+                                    <i class="bi bi-house-door me-1"></i> My Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item mx-1">
+                                <a class="nav-link rounded-pill px-3" asp-controller="UserDashboard" asp-action="CreateTicket">
                                     <i class="bi bi-plus-circle me-1"></i> Create Ticket
                                 </a>
                             </li>

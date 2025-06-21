@@ -1,0 +1,511 @@
+/* Create Ticket Page Styles */
+
+.user-dashboard-wrapper {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.create-ticket-container {
+    background: white;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.create-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 2rem;
+    margin: 0;
+    text-align: left;
+}
+
+.create-header h2 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.create-header h2 i {
+    font-size: 1.2rem;
+}
+
+.create-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.create-form-container {
+    margin-top: 2rem;
+}
+
+/* Form Layout */
+.form-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-row .col-md-6 {
+    flex: 1;
+}
+
+.form-group {
+    flex: 1;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.form-group label i {
+    margin-right: 0.75rem;
+    color: #667eea;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Form Controls */
+.form-control {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #fafbfc;
+    color: #374151;
+    position: relative;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.form-control:hover {
+    border-color: #9ca3af;
+    background-color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Textarea specific styling */
+textarea.form-control {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
+/* Select dropdown styling */
+select.form-control {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    padding-right: 3rem;
+    appearance: none;
+}
+
+select.form-control:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Validation styling */
+.text-danger {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.form-control.is-invalid {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    position: relative;
+}
+
+.form-actions::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);
+}
+
+.btn-cancel, .btn-create {
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    min-width: 160px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-cancel {
+    background: #f8fafc;
+    color: #475569;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-cancel:hover {
+    background: #f1f5f9;
+    color: #334155;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-create::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-create:hover::before {
+    left: 100%;
+}
+
+.btn-create:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-create:active {
+    transform: translateY(-1px);
+}
+
+/* Alert Messages */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.alert-success {
+    color: #065f46;
+    background-color: #d1fae5;
+    border-color: #a7f3d0;
+}
+
+.alert-danger {
+    color: #991b1b;
+    background-color: #fee2e2;
+    border-color: #fecaca;
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    margin-left: auto;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Loading state */
+.btn-create:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-create:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Focus indicators for accessibility */
+.form-control:focus,
+.btn-cancel:focus,
+.btn-create:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .create-ticket-container {
+        padding: 1.5rem;
+        margin: 1rem;
+        border-radius: 12px;
+    }
+    
+    .create-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .create-header p {
+        font-size: 1rem;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn-cancel, .btn-create {
+        justify-content: center;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+    }
+    
+    .form-control {
+        padding: 0.875rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .create-ticket-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for form appearance */
+.create-ticket-container {
+    animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Help Text */
+.form-help {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    font-style: italic;
+}
+
+.form-group:focus-within .form-help {
+    opacity: 1;
+    color: #667eea;
+    transform: translateX(4px);
+}
+
+/* Enhanced Field Styling */
+.form-group {
+    position: relative;
+}
+
+.form-group::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+    z-index: 1;
+}
+
+.form-group:focus-within::before {
+    width: 100%;
+}
+
+/* Input Icons Enhancement */
+.form-group label i {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.form-group:focus-within label i {
+    transform: scale(1.1);
+}
+
+/* Card-like styling for form sections */
+.form-section {
+    background: #fafbfc;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #f1f3f4;
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Add floating labels effect */
+.form-group.floating-label {
+    position: relative;
+}
+
+.form-group.floating-label .form-control:focus + label,
+.form-group.floating-label .form-control:not(:placeholder-shown) + label {
+    transform: translateY(-1.5rem) scale(0.85);
+    color: #667eea;
+}
+
+/* Success state styling */
+.form-control.is-valid {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+.form-control.is-valid:focus {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Progress indicator */
+.form-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+
+/* Subtle animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.form-section:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.form-section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* Enhanced focus states */
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow:
+        0 0 0 4px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.05),
+        inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+/* Improved placeholder styling */
+.form-control::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.5;
+}

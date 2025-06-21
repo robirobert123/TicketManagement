@@ -23,8 +23,17 @@ namespace TicketManagement.Helpers
             result.StatusText = ticketEntity.StatusEntity.StatusName;
             result.CreatedDate = ticketEntity.created_Date;
             result.AuditDate = ticketEntity.audit_Date;
-            result.Assignee = ticketEntity.AssigneeEntity.Id;
-            result.AssigneeName = ticketEntity.AssigneeEntity.FirstName + " " + ticketEntity.AssigneeEntity.LastName;
+            // Handle null assignee (unassigned tickets)
+            if (ticketEntity.AssigneeEntity != null)
+            {
+                result.Assignee = ticketEntity.AssigneeEntity.Id;
+                result.AssigneeName = ticketEntity.AssigneeEntity.FirstName + " " + ticketEntity.AssigneeEntity.LastName;
+            }
+            else
+            {
+                result.Assignee = null;
+                result.AssigneeName = "Unassigned";
+            }
             result.CreatedUser = ticketEntity.created_User;
             result.AuditUser = ticketEntity.audit_User;
             result.Comments = ticketEntity.Comments.ToList();
@@ -169,7 +178,8 @@ namespace TicketManagement.Helpers
             model.TicketID = ticket.TicketID;
             model.PriorityID = ticket.PriorityEntity.PriorityID;
             model.StatusID = ticket.StatusEntity.StatusID;
-            model.Assignee = ticket.AssigneeEntity.Id;
+            // Handle null assignee (unassigned tickets)
+            model.Assignee = ticket.AssigneeEntity?.Id;
 
             try
             {
