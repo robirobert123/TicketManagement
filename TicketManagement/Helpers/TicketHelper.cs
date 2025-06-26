@@ -249,7 +249,7 @@ namespace TicketManagement.Helpers
                                 Value = s.CategoryID.ToString(),
                                 Text = s.CategoryName
                             })
-                    .ToList();
+                        .ToList();
                 }
 
                 var ticketUsers = ticketHandler.GetTicketUsers().Data;
@@ -284,6 +284,35 @@ namespace TicketManagement.Helpers
             result.created_User = ticketModel.CreatedUser;
             result.audit_User = user;
             return result;
+        }
+
+        public StatusEntity ToBusinessStatusEntity(Status status)
+        {
+            if (status == null)
+            {
+                return null;
+            }
+            return new StatusEntity
+            {
+                StatusID = status.StatusID,
+                StatusName = status.Name,
+            };
+        }
+        public Ticket ToDataAccessTicket(TicketEntity entity, string email, Category category, Status status, Priority priority, AspNetUser user)
+        {
+            return new Ticket
+            {
+                Title = entity.Title,
+                Description = entity.Description,
+                audit_Date = DateTime.Now,
+                Category = category,
+                Status = status,
+                Priority = priority,
+                AspNetUser = user,
+                created_Date = DateTime.Now,
+                created_User = email,
+                audit_User = email,
+            };
         }
     }
 }

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.Areas.Identity.Data;
 using TicketManagement.Data;
+using TicketManagement.Helpers;
+using TicketManagement.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("TicketManagementDbContextConnection") ?? throw new InvalidOperationException("Connection string 'TicketManagementDbContextConnection' not found.");
@@ -22,6 +25,8 @@ builder.Services.AddScoped<IPriorityRepository, PriorityRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddSingleton<OpenAIService>();
+builder.Services.AddScoped<TicketHelper>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

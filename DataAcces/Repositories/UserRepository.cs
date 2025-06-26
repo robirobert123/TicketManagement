@@ -21,6 +21,12 @@ namespace DataAcces.Repositories
         {
             return _context.AspNetUsers.Find(id);
         }
+        public AspNetUser GetUserByEmail(string email)
+        {
+            return _context.AspNetUsers.Where(x => x.Email == email)
+                                        .Select(x => x)
+                                        .FirstOrDefault();
+        }
         public void InsertUser(AspNetUser user)
         {
             _context.AspNetUsers.Add(user);

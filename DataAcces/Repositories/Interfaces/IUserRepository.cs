@@ -11,5 +11,6 @@ namespace DataAcces.Repositories.Interfaces
         void UpdateUser(AspNetUser user);
         void DeleteUser(string id);
         void DeleteAll();
+        AspNetUser GetUserByEmail(string email);
     }
 }

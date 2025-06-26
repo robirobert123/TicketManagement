@@ -9,6 +9,7 @@ namespace DataAcces.Repositories.Interfaces
         Ticket GetTicketById(int id);
         void InsertTicket(Ticket ticket);
         void UpdateTicket(Ticket ticket);
+        void Save();
         void DeleteTicket(int id);
         void DeleteAll();
     }
