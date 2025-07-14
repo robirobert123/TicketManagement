@@ -33,6 +33,13 @@ namespace TicketManagement.Controllers
             DashboardModel ticketDashboard = new DashboardModel();
             var ticketHandler = new TicketHandler();
             TicketHelper ticketHelper = new TicketHelper();
+            ticketDashboard.TicketPriorities = ticketHandler.GetTicketPriorities().Data
+                .Select(p => new SelectListItem
+                {
+                    Value = p.PriorityID.ToString(),
+                    Text = p.PriorityName
+                })
+                .ToList();
             ViewBag.PrioritySelectList = new SelectList(ticketHandler.GetTicketPriorities().Data, "PriorityID", "PriorityName");
 
             try

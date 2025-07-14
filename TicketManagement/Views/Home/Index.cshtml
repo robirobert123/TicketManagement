@@ -34,11 +34,11 @@
         </div>
         <div class="filter-dropdown">
             <span>Filter by:</span>
-            <select id="filter-status" class="filter-select">
-                <option value="all">All Statuses</option>
-                @foreach (var status in Model.Statuses)
+            <select id="filter-priority" class="filter-select">
+                <option value="all">All Priorities</option>
+                @foreach (var priority in Model.TicketPriorities)
                 {
-                    <option value="@status.StatusID">@status.StatusName</option>
+                    <option value="@priority.Value">@priority.Text</option>
                 }
             </select>
         </div>
@@ -250,7 +250,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Search function
+            // Funcția de căutare
             function performSearch() {
                 const searchTerm = $("#search-input").val().toLowerCase();
                 
@@ -270,36 +270,40 @@
                 });
             }
             
-            // Search button click
+            // Click pe butonul de căutare
             $("#search-button").click(function() {
                 performSearch();
             });
             
-            // Search on Enter key press
+            // Căutare la apăsarea tastei Enter
             $("#search-input").keypress(function(e) {
-                if (e.which === 13) { // Enter key code
+                if (e.which === 13) { // Codul tastei Enter
                     e.preventDefault();
                     performSearch();
                 }
             });
             
-            // Apply filter based on selected status
-            function applyStatusFilter() {
-                const selectedStatus = $("#filter-status").val();
+            // Aplică filtrul în funcție de prioritatea selectată
+            function applyPriorityFilter() {
+                const selectedPriority = $("#filter-priority").val();
                 
-                if (selectedStatus === 'all') {
-                    // Show all columns and tickets
+                if (selectedPriority === 'all') {
+                    // Arată toate coloanele și tichetele
                     $(".board-column").show();
                     $(".ticket-card").show();
                 } else {
-                    // Show all columns first
+                    // Arată mai întâi toate coloanele
                     $(".board-column").show();
                     
-                    // Hide tickets that don't match the selected status
+                    // Ascunde tichetele care nu corespund priorității selectate
                     $(".ticket-card").each(function() {
-                        const ticketStatusId = $(this).data("status-id");
+                        const ticketPriorityClass = $(this).find(".ticket-priority").attr("class");
+                        // Extrage valoarea priorității din clasă (ex: "ticket-priority high" -> "high")
+                        const priorityValue = ticketPriorityClass.split(" ")[1];
                         
-                        if (ticketStatusId == selectedStatus) {
+                        // Verifică dacă textul priorității corespunde ID-ului priorității selectate
+                        // Aceasta necesită maparea textului priorității la ID
+                        if (getPriorityIdFromClass(priorityValue) == selectedPriority) {
                             $(this).show();
                         } else {
                             $(this).hide();
@@ -307,22 +311,36 @@
                     });
                 }
                 
-                // Always update counters after applying filter
+                // Actualizează întotdeauna contoarele după aplicarea filtrului
                 updateCounters();
             }
-            
-            // Status filter change event
-            $("#filter-status").change(function() {
-                applyStatusFilter();
+
+            // Funcție ajutătoare pentru a mapa clasa priorității la ID-ul priorității
+            function getPriorityIdFromClass(priorityClass) {
+                switch(priorityClass) {
+                    case 'low':
+                        return 3; // ID pentru prioritatea "Low"
+                    case 'medium':
+                        return 2; // ID pentru prioritatea "Medium"
+                    case 'high':
+                        return 1; // ID pentru prioritatea "High"
+                    default:
+                        return null;
+                }
+            }
+
+            // Evenimentul de filtrare în funcție de prioritate
+            $("#filter-priority").change(function() {
+                applyPriorityFilter();
             });
             
-            // Make ticket cards clickable
+            // Click pe tichet
             $(".ticket-card").click(function() {
                 const ticketId = $(this).data("id");
                 window.location.href = '@Url.Action("Details", "Ticket")/' + ticketId;
             });
             
-            // Initialize drag and drop for each column
+            // Inițializare drag and drop pentru fiecare coloană
             const columns = document.querySelectorAll('.column-content');
             
             columns.forEach((column, index) => {
@@ -339,35 +357,31 @@
                         if (ticketId && newStatus) {
                             updateTicketStatus(ticketId, newStatus);
                             
-                            // Update the status-id data attribute on the ticket card
+                            // Actualizează status id-ul
                             $(evt.item).attr('data-status-id', newStatus);
-                            
-                            // Reapply the current filter after status update
-                            applyStatusFilter();
                         }
                     }
                 });
             });
             
-            // Get status ID from column name
+            // Obține ID-ul statusului din numele coloanei
             function getStatusFromColumnIndex(columnName) {
                 switch(columnName) {
                     case 'To Do':
-                        return 1004; // ID for "To Do" status
+                        return 1004; // ID pentru statusul "To Do"
                     case 'In Progress':
-                        return 1005; // ID for "In Progress" status
+                        return 1005; // ID pentru statusul "In Progress"
                     case 'Testing':
-                        return 1008; // ID for "Testing" status
+                        return 1008; // ID pentru statusul "Testing"
                     case 'Done':
-                        return 1006; // ID for "Done/Closed" status
+                        return 1006; // ID pentru statusul "Done/Closed"
                     default:
                         return null;
                 }
             }
             
-            // Update ticket status via AJAX
+            // Actualizează statusul tichetului cu AJAX
             function updateTicketStatus(ticketId, statusId) {
-                // Prevent navigation when dragging
                 $('.ticket-card').off('click').on('click', function(e) {
                     const ticketId = $(this).data("id");
                     window.location.href = '@Url.Action("Details", "Ticket")/' + ticketId;
@@ -382,45 +396,45 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            // Update was successful
+                            // Actualizarea a fost realizată cu succes
                             updateCounters();
                         } else {
-                            // Handle error
-                            alert('Error updating ticket status: ' + response.message);
-                            // Refresh the page to reset the board
+                            // Gestionează eroarea
+                            alert('Eroare la actualizarea statusului tichetului: ' + response.message);
+                            // Reîmprospătează pagina pentru a reseta tabla
                             location.reload();
                         }
                     },
                     error: function() {
-                        alert('Error updating ticket status. Please try again.');
-                        // Refresh the page to reset the board
+                        alert('Eroare la actualizarea statusului tichetului. Vă rugăm să încercați din nou.');
+                        // Reîmprospătează pagina pentru a reseta tabla
                         location.reload();
                     }
                 });
             }
             
-            // Update the counters after drag and drop
+            // Actualizează contoarele după drag and drop
             function updateCounters() {
-                // Count all tickets in each column (not just visible ones)
+                // Numără toate tichetele din fiecare coloană (nu doar cele vizibile)
                 const todoCount = $('.board-column:nth-child(1) .column-content .ticket-card').length;
                 const inProgressCount = $('.board-column:nth-child(2) .column-content .ticket-card').length;
                 const testingCount = $('.board-column:nth-child(3) .column-content .ticket-card').length;
                 const doneCount = $('.board-column:nth-child(4) .column-content .ticket-card').length;
                 
-                // Update status cards with total counts (regardless of filter)
+                // Actualizează cardurile de status cu numărul total (indiferent de filtru)
                 $('.status-card.todo .status-count').text(todoCount);
                 $('.status-card.in-progress .status-count').text(inProgressCount);
                 $('.status-card.testing .status-count').text(testingCount);
                 $('.status-card.done .status-count').text(doneCount);
                 
-                // Update column headers with total counts (regardless of filter)
+                // Actualizează anteturile coloanelor cu numărul total (indiferent de filtru)
                 $('.board-column:nth-child(1) .ticket-count').text(todoCount);
                 $('.board-column:nth-child(2) .ticket-count').text(inProgressCount);
                 $('.board-column:nth-child(3) .ticket-count').text(testingCount);
                 $('.board-column:nth-child(4) .ticket-count').text(doneCount);
             }
             
-            // Initial counter update on page load
+            // Actualizare inițială a contoarelor la încărcarea paginii
             updateCounters();
         });
     </script>
