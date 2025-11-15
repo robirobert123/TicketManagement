@@ -21,8 +21,15 @@ namespace TicketManagement.Controllers
             _logger = logger;
             _userManager = userManager;
         }
+        
         public IActionResult Index()
         {
+            // Redirect User role to their dashboard
+            if (User.IsInRole("User"))
+            {
+                return RedirectToAction("Index", "UserDashboard");
+            }
+
             DashboardModel ticketDashboard = new DashboardModel();
             var ticketHandler = new TicketHandler();
             TicketHelper ticketHelper = new TicketHelper();
